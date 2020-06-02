@@ -1,2 +1,10 @@
+# VSCode config
 .vscode
+
+# Virtual environment
 venv
+
+__pycache__
+
+# Test db
+db.sqlite3

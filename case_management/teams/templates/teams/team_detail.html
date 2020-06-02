@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block content-fluid %}
+{% comment %} Short overview {% endcomment %}
+<div class="row">
+    <div class="col offset-md-1">
+        <h1>Hold Detajler - {{ team.name }}</h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3 offset-md-2">
+        <div class="col content-section">
+            <div class="row">
+                <div class="col-md-12">
+                    <h4>Info om {{ team.name }}</h4>
+                    <hr>
+                </div>
+                <div class="col-md-12">
+                    <p>Oprettet: {{ team.created_at|date:"d M, Y" }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p>Medarbejdere: {{ team_users|length }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p>Ledere: {{ team_leaders }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p>Aktive projekter: {{ active_projects|length }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p>Færdiggjorte projekter: {{ finished_projects|length }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="col content-section">
+            <div class="row">
+                <div class="col-md-12">
+                    <h4>Hold beskrivelse</h4>
+                    <hr>
+                </div>
+                <div class="col">
+                    {{ team.description }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% comment %} Users table {% endcomment %}
+<div class="row mt-3">
+    <div class="col-md-10 offset-md-1 content-section">
+        <h3>Bruger oversigt</h3>
+        {% if team_users|length > 0 %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Navn</th>
+                        <th>Brugernavn</th>
+                        <th>Rolle</th>
+                        <th>Projekter</th>
+                        <th>Oprettet</th>
+                        <th>Handlinger</th>
+                    </tr>
+                </thead>
+                {% for user in team_users %}
+                    <td><a href="#">{{ user.get_full_name }}</a></td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.profile.role.name }}</td>
+                    <td>NYI</td>
+                    <td>{{ user.profile.created_at|date:"d M, Y" }}</td>
+                    <td>
+                        {% if user.profile.role.name == "Team User" %}
+                            <a href="#" class="btn btn-sm btn-secondary">Redigér</a>
+                            <a href="#" class="btn btn-sm btn-danger">Slet</a>
+                        {% else %}
+                            <p>N/A</p>
+                        {% endif %}
+                    </td>
+                {% endfor %}
+            </table>
+        {% else %}
+            <p>Der er ingen brugere tilmeldt på holdet.</p>
+        {% endif %}
+    </div>
+</div>
+
+{% comment %} Projects table {% endcomment %}
+<div class="row mt-3">
+    <div class="col-md-10 offset-md-1 content-section">
+    <h3>Projekt Oversigt</h3>
+    {% if projects|length > 0 %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Navn</th>
+                    <th>Medarbjedere</th>
+                    <th>Leder</th>
+                    <th>Ejer</th>
+                    <th>Status</th>
+                    <th>Oprettet</th>
+                </tr>
+            </thead>
+            {% for project in projects %}
+                <td><a href="#">{{ project.name|truncatechars:25 }}</a></td>
+                <td>NYI</td>
+                <td><a href="#">{{ project.leader.username }}</a></td>
+                <td><a href="#">{{ project.owner.get_full_name }}</a></td>
+                <td>{{ project.status }}</td>
+                <td>{{ project.created_at|date:"d M, Y" }}</td>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>Holdet har endnu ikke modtaget nogle projekter.</p>
+    {% endif %}
+    </div>
+</div>
+
+{% endblock content-fluid %}

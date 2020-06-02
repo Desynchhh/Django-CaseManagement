@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content-fluid %}
+<div class="content-section">
+    <h1>Hold oversigt</h1>
+    <div class="row">
+        <div class="col">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Medarbejder</th>
+                        <th>Brugernavn</th>
+                        <th>Antal projekter</th>
+                        <th>Oprettet</th>
+                    </tr>
+                </thead>
+                {% for object in object_list %}
+                    <tr>
+                        <td><a href="#">{{ object.user.get_full_name }}</a></td>
+                        <td>{{ object.user.username }}</td>
+                        <td>NYI</td>
+                        <td>{{ object.created_at|date:"d M, Y" }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock content-fluid %}

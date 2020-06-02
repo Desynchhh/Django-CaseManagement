@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content-fluid %}
+    <div class="row mt-3">
+        <div class="col">
+            <div class="col content-section">
+                <h2>Opret som medarbejder</h2>
+                <p>Som medarbejder, skal du informere din chef om, at du har oprettet din konto. De vil herefter tilføje dig til deres arbejdshold, så De kan sætte dig på projekter sammen med dine kollegaer.</p>
+                <a class="btn btn-info" href="{% url 'register' 'user' %}">Opret</a>
+            </div>
+        </div>
+        <div class="col">
+            <div class="col content-section">
+                <h2>Opret som kunde</h2>
+                <p>Som kunde, kan du oprette projekter og sende forespørgelser til firmaets mange arbejdshold om, at løse dem. Under processen, kan du selv holde øje med fremskidt og dokumentation.</p>
+                <a class="btn btn-info" href="{% url 'register' 'client' %}">Opret</a>
+            </div>
+        </div>
+        <div class="col">
+            <div class="col content-section">
+                <h2>Har du allerede en bruger?</h2>
+                <p>Så skal du blot logge ind!</p><br><br>
+                <a class="btn btn-info" href="{% url 'login' %}">Log ind</a>
+            </div>
+        </div>
+    </div>
+{% endblock content-fluid %}
