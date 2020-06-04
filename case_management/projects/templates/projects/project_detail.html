@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content-fluid %}
+{% comment %} Short description of the page {% endcomment %}
+<div class="row">
+    <div class="col-md-10 offset-md-1 content-section">
+        <h1>Projekt Detajler - {{ object.name }}</h1>
+        <div>
+            Her kan du se detaljer om det valgte projekt, samt udføre handlinger herpå, såsom at tilføje dokumentation!
+        </div>
+        <div class="mt-2">
+            <a href="{% url 'team-projects' user.profile.team.id user.profile.team.slug %}" class="btn btn-primary">Tilbage til oversigt</a>
+        </div>
+    </div>
+</div>
+
+{% comment %} Functions & Links {% endcomment %}
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <div class="row content-section">
+            <div class="col">
+                <div>
+                    <h4>Udfør handlinger på projektet</h4>
+                </div>
+                <hr>
+                {% if object.status == 'DONE' %}
+                    <div>
+                        <h6>Projektet er markeret som færdiggjort. Du kan derfor ikke udføre handlinger på det.</h6>
+                    </div>
+                {% else %}
+                    <div class="mb-2">
+                        <a href="#" class="btn btn-primary">Tilføj billede</a>
+                        <a href="#" class="btn btn-primary">Tilføj note</a>
+                        {% if user == object.leader %}
+                            <a href="#" class="btn btn-info">Tilføj / fjern medarbejdere</a>
+                        {% endif %}
+                        {% if user == object.owner %}
+                            <a href="{% url 'project-update' object.pk object.slug %}" class="btn btn-warning">Redigér</a>
+                            <a href="#" class="btn btn-danger">Slet</a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+                {% if user == object.leader %}
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateStatusModal">
+                        Opdater status
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% comment %} Overview {% endcomment %}
+<div class="row">
+    <div class="col-md-4 offset-md-1">
+        <div class="col content-section">
+            <div class="row">
+                <div class="col-md-12">
+                    <h4>Info om {{ object.name }}</h4>
+                    <hr>
+                </div>
+                <div class="col-md-6">
+                    <p>
+                        <b>Sagsleder:</b>
+                        <br>
+                        <a href="#">{{ object.leader.username }}</a>
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <p>
+                        <b>Ejer:</b>
+                        <br>
+                        <a href="#">{{ object.owner.get_full_name }}</a>
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <p>
+                        <b>Medarbejdere:</b>
+                        <br>
+                        {{ object.users|length }}
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <p>
+                        <b>Status:</b>
+                        <br>
+                        {% if object.status == 'DONE' %}
+                            Færdiggjort
+                        {% elif object.status == 'CURRENT' %}
+                            Igangværende
+                        {% else %}
+                            Modtaget
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <p>
+                        <b>Hold:</b>
+                        <br>
+                        {% if user.profile.role.name == 'Team Leader' %}
+                            <a href="{% url 'team-detail' object.team.pk object.team.slug %}">{{ object.team }}</a>
+                        {% else %}
+                            {{ object.team }}
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <p>
+                        <b>Oprettet:</b>
+                        <br>
+                        {{ object.created_at|date:"d M, Y" }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="col content-section">
+            <div class="row">
+                <div class="col-md-12">
+                    <h4>Beskrivelse</h4>
+                    <hr>
+                </div>
+                <div class="col">
+                    {{ object.description }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% comment %} Images {% endcomment %}
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <div class="content-section">
+            <div class="row">
+                <div class="col">
+                    <h4>Billeder</h4>
+                    <hr>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    NYI
+                    {% comment %} INSERT IMAGES HERE {% endcomment %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% comment %} Notes {% endcomment %}
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <div class="content-section">
+            <div class="row">
+                <div class="col">
+                    <h4>Notater</h4>
+                    <hr>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    NYI
+                    {% comment %} INSERT NOTES HERE {% endcomment %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% comment %} Update PROJECT STATUS Modal {% endcomment %}
+<div class="modal fade" id="updateStatusModal" tabindex="-1" role="dialog" aria-labelledby="updateStatusModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateStatusModalLabel">Opdater status - {{ object.name }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'project-status-update' object.pk object.slug %}" method="post">
+                {% csrf_token %}
+                <div id="div_id_status" class="form-group">
+                    <label for="id_stauts" class="requiredField">Status</label>
+                    <div class>
+                        <select name="status" class="select form-control" id="id_status">
+                            <option value="CURRENT">Igangværende</option>
+                            <option value="DONE">Færdig</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fortryd</button>
+                    <input type="submit" class="btn btn-primary" value="Sæt status" />
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content-fluid %}

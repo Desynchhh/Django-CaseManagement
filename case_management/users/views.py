@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, HttpResponse
 
 from django.contrib import messages
+from django.urls import reverse
 
 from .forms import RegisterForm
 
@@ -36,8 +37,13 @@ def start(request):
 
 
 def confirm_login(request):
-    if request.user.profile.role.name == 'Team Leader':
-        return redirect('team-index')
+    team = request.user.profile.team
+    if team is not None:
+        # if request.user.profile.role.name == 'Team Leader':
+        return redirect(reverse('team-index', kwargs={
+            'pk': team.id,
+            'slug': team.slug
+        }))
     return redirect('client-index')
 
 

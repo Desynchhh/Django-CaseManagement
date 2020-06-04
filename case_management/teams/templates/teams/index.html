@@ -2,6 +2,17 @@
 {% block content-fluid %}
 <div class="content-section">
     <h1>Hold oversigt</h1>
+    <p>
+        Dette er en oversigt over medarbejdere, som er indmeldt på dit hold. Det er ikke muligt at få en oversigt over andre hold end dit eget.<br>
+        Klik på en medarbejders navn for at se deres profil.
+    </p>
+</div>
+<div class="content-section">
+    <div class="row">
+        <div class="col">
+            <h2>{{ team.name }}</h2>
+        </div>
+    </div>
     <div class="row">
         <div class="col">
             <table class="table">
@@ -13,12 +24,12 @@
                         <th>Oprettet</th>
                     </tr>
                 </thead>
-                {% for object in object_list %}
+                {% for member in team_users %}
                     <tr>
-                        <td><a href="#">{{ object.user.get_full_name }}</a></td>
-                        <td>{{ object.user.username }}</td>
+                        <td><a href="#">{{ member.get_full_name }}</a></td>
+                        <td>{{ member.username }}</td>
                         <td>NYI</td>
-                        <td>{{ object.created_at|date:"d M, Y" }}</td>
+                        <td>{{ member.created_at|date:"d M, Y" }}</td>
                     </tr>
                 {% endfor %}
             </table>

@@ -6,15 +6,35 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
+            
+            {% comment %} Teams dropdown {% endcomment %}
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Hold
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="{% url 'team-index' %}">Oversigt</a>
+                    <a class="dropdown-item" href="{% url 'team-index' user.profile.team.pk user.profile.team.slug %}">Oversigt</a>
                     <a class="dropdown-item" href="{% url 'team-detail' user.profile.team.pk user.profile.team.slug %}">Detaljer</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#">Opret nyt</a>
                 </div>
             </li>
+            {% comment %} /Teams dropdown {% endcomment %}
+
+            {% comment %} Projects dropdown {% endcomment %}
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Projekter
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="{% url 'team-projects' user.profile.team.pk user.profile.team.slug %}">Oversigt</a>
+                    <a class="dropdown-item" href="#">Kunde anmodninger</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'project-create' %}">Opret nyt</a>
+                </div>
+            </li>
+            {% comment %} /Projects dropdown {% endcomment %}
+
             <li class="nav-item">
                 <a class="nav-link" href="#">Link</a>
             </li>

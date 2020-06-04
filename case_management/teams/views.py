@@ -8,21 +8,25 @@ from users.models import Profile
 from django.contrib.auth.models import User
 from projects.models import Project
 
+from role_permissions.rules import TeamLeaderRequiredMixin
+
 # Create your views here.
 # def index(request):
 #     team_users = Profile.objects.filter(team=request.user.profile.team)
 #     return render(request, 'teams/index.html', {"users":team_users})
-class TeamLeaderRequiredMixin(UserPassesTestMixin):
-    def test_func(self):
-        return self.request.user.profile.role.name == 'Team Leader'
-
 
 class TeamListView(LoginRequiredMixin, TeamLeaderRequiredMixin, ListView):
     model = Profile
     template_name = 'teams/index.html'
 
-    def get_queryset(self):
-        return Profile.objects.filter(team=self.request.user.profile.team)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['team'] = get_object_or_404(Team, pk=self.kwargs['pk'], slug=self.kwargs['slug'])
+        context['team_users'] = User.objects.filter(profile__team=context['team'])
+        return context
+
+    # def get_queryset(self):
+    #     return Profile.objects.filter(team=self.request.user.profile.team)
 
 
 class TeamDetailView(LoginRequiredMixin, TeamLeaderRequiredMixin, DetailView):

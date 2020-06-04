@@ -31,6 +31,7 @@ urlpatterns = [
     path('user/', include('users.urls')),
     path('client/', include('clients.urls')),
     path('team/', include('teams.urls')),
+    path('project/', include('projects.urls')),
     path('', user_views.start, name='start'),
 ]
 

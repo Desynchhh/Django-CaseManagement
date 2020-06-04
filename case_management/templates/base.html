@@ -24,13 +24,20 @@
         {% endfor %}
     {% endif %}
 
-    <div class="mt-2">
-        <div class="container-fluid">
-            {% block content-fluid %}
-            {% endblock content-fluid %}
-        </div>
-        <div class="container">
-            {% block content %}{% endblock content %}
+    <div class="row">
+        {% comment %} <div class="col-md-2">
+            [INSERT SIDEBAR HERE]
+        </div> {% endcomment %}
+        <div class="col">
+            <div class="mt-2">
+                <div class="container-fluid">
+                    {% block content-fluid %}
+                    {% endblock content-fluid %}
+                </div>
+                <div class="container">
+                    {% block content %}{% endblock content %}
+                </div>
+            </div>
         </div>
     </div>
     

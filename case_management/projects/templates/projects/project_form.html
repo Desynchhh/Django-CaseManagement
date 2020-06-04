@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="row">
+    <div class="col content-section">
+        <form action="" method="post">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend>{{ legend }}</legend>
+                <hr>
+                {{ form|crispy }}
+            </fieldset>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">{{ btn }}</button>
+            </div>
+        </form>
+        <div class="center-text">
+            <small>Fortrudt? <a href="{% url 'project-detail' object.pk object.slug %}">Gå tilbage</a></small>
+        </div>
+    </div>
+</div>
+{% endblock content %}

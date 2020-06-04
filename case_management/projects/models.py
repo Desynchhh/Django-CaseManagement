@@ -1,5 +1,6 @@
 from django.db import models
 
+from django.shortcuts import reverse
 from django.utils.text import slugify
 from django.utils import timezone
 
@@ -15,20 +16,21 @@ class Project(models.Model):
         DONE = ('DONE', 'Færdig')
 
 
-    team = models.OneToOneField(
+    team = models.ForeignKey(
         'teams.Team',
         on_delete=models.SET_DEFAULT,
         blank=True,
         null=True,
-        default=None
+        default=None,
+        help_text='Holdet i firmaet, som du ønsker skal tage imod dit projekt.<br>Hvis du ikke vælger et, kan ethvert hold tage imod det.'
     )
 
-    owner = models.OneToOneField(
+    owner = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='owner'
     )
-    leader = models.OneToOneField(
+    leader = models.ForeignKey(
         User,
         on_delete=models.SET_DEFAULT,
         related_name='leader',
@@ -36,6 +38,7 @@ class Project(models.Model):
         null=True,
         default=None
     )
+    users = models.ManyToManyField(User)
 
     name = models.CharField(
         max_length=255,
@@ -60,6 +63,10 @@ class Project(models.Model):
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
         super().save()
+
+    def get_absolute_url(self):
+        return reverse("project-detail", kwargs={"pk": self.pk, "slug": self.slug})
+    
 
     def __str__(self):
         return self.name
