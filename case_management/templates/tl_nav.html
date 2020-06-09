@@ -1,0 +1,62 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">Leder</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            
+            {% comment %} Teams dropdown {% endcomment %}
+            {% if user.profile.team %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Hold
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        {% comment %} <a class="dropdown-item" href="{% url 'team-index' user.profile.team.pk user.profile.team.slug %}">Oversigt</a> {% endcomment %}
+                        <a class="dropdown-item" href="{% url 'team-detail' user.profile.team.pk user.profile.team.slug %}">Detaljer</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{% url 'team-create' %}">Opret nyt</a>
+                    </div>
+                </li>
+            {% comment %} /Teams dropdown {% endcomment %}
+
+            {% comment %} Projects dropdown {% endcomment %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Projekter
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{% url 'team-projects' user.profile.team.pk user.profile.team.slug %}">Oversigt</a>
+                        <a class="dropdown-item" href="#">Kunde anmodninger</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{% url 'project-create' %}">Opret nyt</a>
+                    </div>
+                </li>
+            {% endif %}
+            {% comment %} /Projects dropdown {% endcomment %}
+
+            <li class="nav-item">
+                <a class="nav-link" href="#">Link</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Dropdown
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="#">Action</a>
+                    <a class="dropdown-item" href="#">Another action</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#">Something else here</a>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link disabled" href="#">Disabled</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+            {% include 'nav_components/user_section.html' %}
+        </ul>
+    </div>
+</nav>

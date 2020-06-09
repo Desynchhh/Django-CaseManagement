@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content-fluid %}
+
+{% comment %} Short description of the page {% endcomment %}
+<div class="content-section">
+    <h1>Projekt oversigt</h1>
+    <div>
+        Dette er en oversigt over alle projekter, du har oprettet.<br>
+        Klik på et projekts navn for at se deres flere detajler om det, samt udføre handlinger derpå.
+    </div>
+</div>
+<div class="content-section">
+    <div class="row">
+        <div class="col">
+            <h2>Mine projekter</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            {% include 'projects/project_table.html' with projects=object_list %}
+        </div>
+    </div>
+</div>
+{% endblock content-fluid %}

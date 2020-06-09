@@ -16,9 +16,9 @@
                 <button type="submit" class="btn btn-primary">{{ btn }}</button>
             </div>
         </form>
-        {% if update %}
+        {% if user.profile.team %}
             <div class="center-text">
-                <small>Fortrudt? <a href="{% url 'project-detail' object.pk object.slug %}">Gå tilbage</a></small>
+                <small>Fortrudt? <a href="{% url 'team-detail' user.profile.team.pk user.profile.team.slug %}">Gå tilbage</a></small>
             </div>
         {% endif %}
     </div>

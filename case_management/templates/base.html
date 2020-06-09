@@ -11,7 +11,11 @@
 </head>
 <body>
     {% if user.is_authenticated %}
-        {% include 'main_nav.html' %}
+        {% if user.profile.role.name == 'Team Leader' %}
+            {% include 'tl_nav.html' %}
+        {% elif user.profile.role.name == 'Client' %}
+            {% include 'c_nav.html' %}
+        {% endif %}
     {% else %}
         {% include 'start_nav.html' %}
     {% endif %}

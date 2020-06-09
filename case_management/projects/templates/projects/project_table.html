@@ -1,0 +1,38 @@
+{% if projects|length > 0 %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Navn</th>
+                <th>Beskrivelse</th>
+                <th>Medarbjedere</th>
+                <th>Leder</th>
+                <th>Ejer</th>
+                <th>Status</th>
+                <th>Oprettet</th>
+            </tr>
+        </thead>
+        {% for project in projects %}
+            <tr>
+                <td><a href="{% url 'project-detail' project.pk project.slug %}">{{ project.name|truncatechars:25 }}</a></td>
+                <td>{{ project.description|truncatechars:50 }}</td>
+                <td>{{ project.users|length }}</td>
+                <td><a href="#">{{ project.leader.username }}</a></td>
+                <td><a href="#">{{ project.owner.get_full_name }}</a></td>
+                <td>
+                    {% if project.status == 'PENDING' %}
+                        Modtaget
+                    {% elif project.status == 'CURRENT' %}
+                        Igangværende
+                    {% else %}
+                        Færdiggjort
+                    {% endif %}
+                </td>
+                <td>{{ project.created_at|date:"d M, Y" }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <div>
+        <i><b>{{ no_projects_msg }}</b></i>
+    </div>
+{% endif %}

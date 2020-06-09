@@ -8,3 +8,5 @@ __pycache__
 
 # Test db
 db.sqlite3
+
+media/img/pfp

@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth import password_validation
 from django.contrib.auth.models import User
+from .models import Profile
 from django.contrib.auth.forms import UserCreationForm
 from django.core.validators import RegexValidator
 
@@ -46,3 +47,36 @@ class RegisterForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'username', 'email', 'password1', 'password2']
+
+
+class UpdateUserForm(forms.ModelForm):
+    first_name = forms.CharField(required=False, label='Fornavn', validators=[letters_only])
+    last_name = forms.CharField(required=False, label='Efternavn', validators=[letters_only])
+    username = forms.CharField(required=False, label='Brugernavn')
+    email = forms.EmailField(required=False, label='Email')
+    password1 = forms.CharField(required=False, label='Nyt kodeord')
+    password2 = forms.CharField(required=False, label='Bekræft nye kodeord')
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].help_text = "Kun bogstaver, tal og @/./+/-/_"
+
+    class Meta:
+        model = User
+        fields = ("first_name", "last_name", "username", "email", "password1", "password2")
+
+
+class UpdateProfileForm(forms.ModelForm):
+    phone_number = forms.CharField(
+        required=False,
+        label='Telefon nummer'
+    )
+    pfp = forms.ImageField(
+        required=False,
+        label='Profil billede',
+        widget=forms.FileInput
+    )
+
+    class Meta:
+        model = Profile
+        fields = ("phone_number", "pfp")

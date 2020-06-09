@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="row">
+    <div class="col mb-2">
+        <h1>Opdater profil - {{ user.username }}</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col content-section">
+        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                {{ u_form|crispy }}
+                {{ p_form|crispy }}
+            </fieldset>
+            <div class="form-group">
+                <a href="{% url 'user-profile' user.pk %}" class="btn btn-secondary">Gå tilbage</a>
+                <input type="submit" class="btn btn-primary" value="Gem">
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}

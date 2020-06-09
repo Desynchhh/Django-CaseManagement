@@ -1,8 +1,159 @@
 {% extends 'base.html' %}
 
+{% load crispy_forms_tags %}
+
 {% block content-fluid %}
-    <div class="content-section">
-        <h1>Profile</h1>
-        <p>{{ user.username }}</p>
+<div class="row">
+    <div class="col offset-md-1 mb-2">
+        <h1>Profil - {{ user.username }}</h1>
     </div>
+</div>
+
+{% comment %} Profile Section {% endcomment %}
+<div class="row">
+    <div class="col-md-6 offset-md-1 content-section">
+        <h3>{{ user.get_full_name }}</h3>
+        <div class="row">
+            <div class="col">
+                <img src="{{ user.profile.pfp.url }}" alt="NO_IMG" class="account-img">
+            </div>
+            <div class="col">
+                <p>
+                    <b>Fulde navn:</b><br>
+                    {{ user.get_full_name }}
+                </p>
+                <p>
+                    <b>Username:</b><br>
+                    {{ user.username }}
+                </p>
+                <p>
+                    <b>Email:</b><br>
+                    {{ user.email }}
+                </p>
+                <p>
+                    <b>Telefon:</b><br>
+                    {% if user.profile.phone_number %}
+                        {{ user.profile.phone_number }}
+                    {% else %}
+                        <i>Intet tlf nr fundet.</i>
+                    {% endif %}
+                </p>
+                {% comment %} {% if is_current_user %}
+                    <p>
+                        <b>Opdater info & kodeord:</b><br>
+                        <a href="#" type="button" class="btn btn-primary">Rediger</a>
+                    </p>
+                {% endif %} {% endcomment %}
+            </div>
+            <div class="col">
+                {% if user.profile.role.name != 'Client' %}
+                    <p>
+                        <b>Hold:</b><br>
+                        {% if user.profile.team %}
+                            <a href="{% url 'team-detail' user.profile.team.pk user.profile.team.slug %}">
+                                {{ user.profile.team.name }}
+                            </a>
+                        {% else %}
+                            <i>Intet hold.</i>
+                        {% endif %}
+                    </p>
+                    <p>
+                        <b>Projekter:</b><br>
+                        {{ user.project_set.all|length }}
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+        {% if is_current_user %}
+            <div class="row">
+                <div class="col-md-2 mt-3">
+                    <a href="{% url 'profile-update' user.pk %}" type="button" class="btn btn-primary">Opdater profil</a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% comment %} /Profile Section {% endcomment %}
+<br>
+{% comment %} Projects {% endcomment %}
+{% if user.profile.role.name == 'Client' or user.profile.role.name == 'Team Leader'%}
+    <div class="row">
+        <div class="col-md-10 offset-md-1 content-section">
+            <h2>Oprettede Projekter</h2>
+            <div>
+                En liste af projekter som
+                {% if is_current_user %}
+                    du
+                {% else %}
+                    {{ user.username }}
+                {% endif %}
+                har oprettet.
+            </div>
+        {% include 'projects/project_table.html' with projects=owns_projects %}
+        </div>
+    </div>
+{% endif %}
+
+{% if user.profile.role.name == 'Team Leader' %}
+    <div class="row">
+        <div class="col-md-10 offset-md-1 content-section">
+            <h2>Leder Projekter</h2>
+            <div>
+                En liste af projekter som
+                {% if is_current_user %}
+                    du
+                {% else %}
+                    {{ user.username }}
+                {% endif %}
+                er leder af.
+            </div>
+            {% include 'projects/project_table.html' with projects=leads_projects%}
+        </div>
+    </div>
+{% endif %}
+
+{% if user.profile.role.name != 'Client' %}
+    <div class="row">
+        <div class="col-md-10 offset-md-1 content-section">
+            <h2>Projekter</h2>
+            <div>
+                En liste af projekter som
+                {% if is_current_user %}
+                    du
+                {% else %}
+                    {{ user.username }}
+                {% endif %}
+                arbejder på.
+            </div>
+            {% include 'projects/project_table.html' %}
+        </div>
+    </div>
+{% endif %}
+{% comment %} /Projects {% endcomment %}
+
+{% comment %} Upload pfp modal {% endcomment %}
+{% comment %} {% if is_current_user %}
+    <div class="modal fade" id="updatePFPModal" tabindex="-1" role="dialog" aria-labelledby="updatePFPModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updatePFPModalLabel">Upload profil billede</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'profile-update' user.pk %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ pfp_form|crispy }}
+                </div>
+                <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fortryd</button>
+                        <input type="submit" class="btn btn-primary" value="Upload" />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %} {% endcomment %}
 {% endblock content-fluid %}

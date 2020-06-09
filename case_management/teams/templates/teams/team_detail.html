@@ -5,9 +5,9 @@
 <div class="row">
     <div class="col offset-md-1 mb-2">
         <h1>Hold Detajler - {{ team.name }}</h1>
-        <div class="mt-2">
+        {% comment %} <div class="mt-2">
             <a href="{% url 'team-index' team.pk team.slug %}" class="btn btn-primary">Tilbage til oversigt</a>
-        </div>
+        </div> {% endcomment %}
     </div>
 </div>
 <div class="row">
@@ -15,7 +15,10 @@
         <div class="col content-section">
             <div class="row">
                 <div class="col-md-12">
-                    <h4>Info om {{ team.name }}</h4>
+                    <h4>
+                        Info om {{ team.name }} - 
+                        <a href="{% url 'team-update' team.pk team.slug %}" class="btn btn-sm btn-primary">Redigér hold</a>
+                    </h4>
                     <hr>
                 </div>
                 <div class="col-md-12">
@@ -72,7 +75,7 @@
                         <td><a href="#">{{ user.get_full_name }}</a></td>
                         <td>{{ user.username }}</td>
                         <td>{{ user.profile.role.display_name }}</td>
-                        <td>NYI</td>
+                        <td>{{ user.project_set.all|length }}</td>
                         <td>{{ user.profile.created_at|date:"d M, Y" }}</td>
                         <td>
                             {% if user.profile.role.name == "Team User" %}
@@ -95,32 +98,7 @@
 <div class="row mt-3">
     <div class="col-md-10 offset-md-1 content-section">
     <h3>Projekt Oversigt</h3>
-    {% if projects|length > 0 %}
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Navn</th>
-                    <th>Medarbjedere</th>
-                    <th>Leder</th>
-                    <th>Ejer</th>
-                    <th>Status</th>
-                    <th>Oprettet</th>
-                </tr>
-            </thead>
-            {% for project in projects %}
-                <tr>
-                    <td><a href="{% url 'project-detail' project.pk project.slug %}">{{ project.name|truncatechars:25 }}</a></td>
-                    <td>NYI</td>
-                    <td><a href="#">{{ project.leader.username }}</a></td>
-                    <td><a href="#">{{ project.owner.get_full_name }}</a></td>
-                    <td>{{ project.status }}</td>
-                    <td>{{ project.created_at|date:"d M, Y" }}</td>
-                </tr>
-            {% endfor %}
-        </table>
-    {% else %}
-        <p>Holdet har endnu ikke modtaget nogle projekter.</p>
-    {% endif %}
+        {% include 'projects/project_table.html' %}
     </div>
 </div>
 

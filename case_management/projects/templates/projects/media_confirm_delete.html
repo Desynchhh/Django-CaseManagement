@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row">
+    <div class="col">
+        <h2>Slet {{ object.title }}?</h2>
+    </div>
+</div>
+<div class="content-section">
+    <div class="row">
+        <div class="col">
+            Er du sikker på du vil slette <b>{{ object.title }}?</b><br>
+            Denne handling kan <b>ikke</b> fotrydes, og det er <b>ikke</b> muligt at gendanne noten.
+        </div>
+    </div>
+    <div>
+        <img src="{{ object.img.url }}" alt="NO_IMG">
+    </div>
+    <div class="row mt-2">
+        <div class="col">
+            <form action="" method="post">
+                {% csrf_token %}
+                <a href="{% url 'project-detail' object.project.pk object.project.slug %}" class="btn btn-primary">Gå tilbage</a>
+                <input type="submit" class="btn btn-danger" value="Ja, jeg er sikker">
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}

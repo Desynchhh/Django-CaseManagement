@@ -4,8 +4,9 @@ from django.contrib.auth.models import User
 from teams.models import Team
 
 from django.core.validators import RegexValidator
-
 from django.utils import timezone
+
+from PIL import Image
 
 # Create your models here.
 class Role(models.Model):
@@ -43,7 +44,7 @@ class Profile(models.Model):
         default=None,
         help_text='Arbejdsholdet brugeren skal tilkobles.',
     )
-    role = models.OneToOneField(
+    role = models.ForeignKey(
         Role,
         on_delete=models.SET_NULL,
         blank=True,
@@ -66,6 +67,17 @@ class Profile(models.Model):
 
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
+
+    # Resize image after upload
+    def save(self, *args, **kwargs):
+        super().save()
+
+        img = Image.open(self.pfp.path)
+
+        if img.height > 300 or img.width > 300:
+            output_size = (300, 300)
+            img.thumbnail(output_size)
+            img.save(self.pfp.path)
 
     def __str__(self):
         return f"{self.user.username}'s Profile"

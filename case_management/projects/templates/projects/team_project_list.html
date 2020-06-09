@@ -2,7 +2,7 @@
 {% block content-fluid %}
 
 {% comment %} Short description of the page {% endcomment %}
-<div class="content-section">
+<div class="col-md-10 offset-md-1 mb-4 content-section">
     <h1>Projekt oversigt</h1>
     <div>
         Dette er en oversigt over alle projekter, dit hold har modtaget.<br>
@@ -11,80 +11,18 @@
 </div>
 
 {% comment %} Active projects {% endcomment %}
-<div class="content-section">
-    <div class="row">
-        <div class="col">
-            <h2>Igangværende projekter</h2>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            {% if active_projects|length > 0 %}
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Navn</th>
-                            <th>Beskrivelse</th>
-                            <th>Leder</th>
-                            <th>Medarbejdere</th>
-                            <th>Ejer</th>
-                            <th>Oprettet</th>
-                        </tr>
-                    </thead>
-                    {% for project in active_projects %}
-                        <tr>
-                            <td><a href="{% url 'project-detail' project.pk project.slug %}">{{ project.name }}</a></td>
-                            <td>{{ project.description|truncatechars:50 }}</td>
-                            <td><a href="#">{{ project.leader.username }}</a></td>
-                            <td>NYI</td>
-                            <td><a href="#">{{ project.owner.get_full_name }}</a></td>
-                            <td>{{ project.created_at|date:"d M, Y" }}</td>
-                        </tr>
-                    {% endfor %}
-                </table>
-            {% else %}
-                <div>Der er pt. ingen aktive projekter.</div>
-            {% endif %}
-        </div>
+<div class="row">
+    <div class="col-md-10 offset-md-1 content-section">
+        <h2>Igangværende projekter</h2>
+        {% include 'projects/project_table.html' with projects=active_projects %}
     </div>
 </div>
 
 {% comment %} Completed projects {% endcomment %}
-<div class="content-section">
-    <div class="row">
-        <div class="col">
-            <h2>Færdiggjorte projekter</h2>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            {% if finished_projects|length > 0 %}
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Navn</th>
-                            <th>Beskrivelse</th>
-                            <th>Leder</th>
-                            <th>Medlemmer</th>
-                            <th>Ejer</th>
-                            <th>Oprettet</th>
-                        </tr>
-                    </thead>
-                    {% for project in finished_projects %}
-                        <tr>
-                            <td><a href="#">{{ project.name }}</a></td>
-                            <td>{{ project.description|truncatechars:50 }}</td>
-                            <td><a href="#">{{ project.leader.username }}</a></td>
-                            <td>NYI</td>
-                            <td><a href="#">{{ project.owner.get_full_name }}</a></td>
-                            <td>{{ project.created_at|date:"d M, Y" }}</td>
-                        </tr>
-                    {% endfor %}
-                </table>
-            {% else %}
-                <div>Der er pt. ingen færdiggjorte projekter.</div>
-            {% endif %}
-        </div>
+<div class="row">
+    <div class="col-md-10 offset-md-1 content-section">
+        <h2>Færdiggjorte projekter</h2>
+        {% include 'projects/project_table.html' with projects=finished_projects %}
     </div>
 </div>
 {% endblock content-fluid %}

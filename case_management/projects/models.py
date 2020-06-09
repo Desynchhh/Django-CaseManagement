@@ -4,8 +4,9 @@ from django.shortcuts import reverse
 from django.utils.text import slugify
 from django.utils import timezone
 
-# from teams.models import Team
 from django.contrib.auth.models import User
+
+import os
 
 # Create your models here.
 
@@ -38,7 +39,7 @@ class Project(models.Model):
         null=True,
         default=None
     )
-    users = models.ManyToManyField(User)
+    users = models.ManyToManyField(User, blank=True)
 
     name = models.CharField(
         max_length=255,
@@ -70,3 +71,55 @@ class Project(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Note(models.Model):
+    title = models.CharField(
+        max_length=255,
+        error_messages={"required":"Titel feltet er påkrævet."}
+    )
+    description = models.CharField(
+        max_length=255,
+        error_messages={"required":"Beskrivelsesfeltet er påkrævet."}
+    )
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def get_absolute_url(self):
+        return reverse("project-detail", kwargs={"pk": self.project.pk, "slug": self.project.slug})
+    
+
+    def __str__(self):
+        return self.title
+
+
+def get_upload_path(instance, filename):
+    return os.path.join('img', str(instance.project.pk), filename)
+
+class Media(models.Model):
+    title = models.CharField(
+        max_length=255,
+        error_messages={"required":"Titel feltet er påkrævet."}
+    )
+    description = models.CharField(
+        max_length=255,
+        error_messages={"required":"Beskrivelsesfeltet er påkrævet."}
+    )
+
+    img = models.ImageField(upload_to=get_upload_path)
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def get_absolute_url(self):
+        return reverse("project-detail", kwargs={"pk": self.project.pk, "slug": self.project.slug})
+
+    def __str__(self):
+        return self.title

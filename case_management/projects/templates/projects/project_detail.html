@@ -11,7 +11,11 @@
             Her kan du se detaljer om det valgte projekt, samt udføre handlinger herpå, såsom at tilføje dokumentation!
         </div>
         <div class="mt-2">
-            <a href="{% url 'team-projects' user.profile.team.id user.profile.team.slug %}" class="btn btn-primary">Tilbage til oversigt</a>
+            {% if user.profile.role.name == 'Client' %}
+                <a href="{% url 'client-projects' %}" class="btn btn-primary">Tilbage til oversigt</a>
+            {% else %}
+                <a href="{% url 'team-projects' user.profile.team.id user.profile.team.slug %}" class="btn btn-primary">Tilbage til oversigt</a>
+            {% endif %}
         </div>
     </div>
 </div>
@@ -31,14 +35,14 @@
                     </div>
                 {% else %}
                     <div class="mb-2">
-                        <a href="#" class="btn btn-primary">Tilføj billede</a>
-                        <a href="#" class="btn btn-primary">Tilføj note</a>
+                        <a href="{% url 'image-create' object.pk object.slug %}" class="btn btn-primary">Tilføj billede</a>
+                        <a href="{% url 'note-create' object.pk object.slug %}" class="btn btn-primary">Tilføj note</a>
                         {% if user == object.leader %}
                             <a href="#" class="btn btn-info">Tilføj / fjern medarbejdere</a>
                         {% endif %}
                         {% if user == object.owner %}
-                            <a href="{% url 'project-update' object.pk object.slug %}" class="btn btn-warning">Redigér</a>
-                            <a href="#" class="btn btn-danger">Slet</a>
+                            <a href="{% url 'project-update' object.pk object.slug %}" class="btn btn-secondary">Redigér</a>
+                            <a href="{% url 'project-delete' object.pk object.slug %}" class="btn btn-danger">Slet</a>
                         {% endif %}
                     </div>
                 {% endif %}
@@ -142,14 +146,32 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col">
-                    NYI
-                    {% comment %} INSERT IMAGES HERE {% endcomment %}
-                </div>
+                {% for medium in object.media_set.all %}
+                    <div class="col-md-3">
+                        {% comment %} INSERT NOTES HERE {% endcomment %}
+                        <div class="content-section">
+                            <h4>
+                                {{ medium.title }}
+                                {% if user == medium.user or user.profile.role.name == 'Team Leader' %}
+                                    <a href="{% url 'image-delete' object.pk object.slug medium.pk %}" type="button" class="btn btn-danger btn-sm" style="float:right;">Slet</a>
+                                {% endif %}
+                            </h4>
+                            <hr>
+                            <img src="{{ medium.img.url }}" alt="NO_IMG">
+                            <p class="mt-2">{{ medium.description }}</p>
+                            <small>- {{ medium.user.get_full_name }}</small>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="col">
+                        <i><b>Ingen billeder fundet.</b></i>
+                    </div>
+                {% endfor %}
             </div>
         </div>
     </div>
 </div>
+
 
 {% comment %} Notes {% endcomment %}
 <div class="row">
@@ -162,10 +184,26 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col">
-                    NYI
-                    {% comment %} INSERT NOTES HERE {% endcomment %}
-                </div>
+                {% for note in object.note_set.all %}
+                    <div class="col-md-3">
+                        {% comment %} INSERT NOTES HERE {% endcomment %}
+                        <div class="content-section">
+                            <h4>
+                                {{ note.title }}
+                                {% if user == note.user or user.profile.role.name == 'Team Leader' %}
+                                    <a href="{% url 'note-delete' object.pk object.slug note.pk %}" type="button" class="btn btn-danger btn-sm" style="float:right;">Slet</a>
+                                {% endif %}
+                            </h4>
+                            <hr>
+                            <p>{{ note.description }}</p>
+                            <small>- {{ note.user.get_full_name }}</small>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="col">
+                        <i><b>Ingen noter fundet.</b></i>
+                    </div>
+                {% endfor %}
             </div>
         </div>
     </div>
