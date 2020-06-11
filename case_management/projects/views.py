@@ -31,35 +31,6 @@ from role_permissions.rules import (
 )
 
 # Create your views here.
-class TeamProjectListView(LoginRequiredMixin, TeamLeaderRequiredMixin, ListView):
-    model = Project
-    template_name = 'projects/team_project_list.html'
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-        # ctx['active_projects'] = Project.objects.filter(
-        #     team__pk=self.kwargs['pk'],
-        #     status=Project.Status.CURRENT
-        # ).order_by('-created_at')
-
-        # ctx['finished_projects'] = Project.objects.filter(
-        #     team__pk=self.kwargs['pk'],
-        #     status=Project.Status.DONE
-        # ).order_by('-created_at')
-
-        projects = Project.objects.filter(team__pk=self.kwargs['pk'], team__slug=self.kwargs['slug']).order_by('-created_at')
-        ctx['active_projects'] = []
-        ctx['finished_projects'] = []
-        ctx['no_projects_msg'] = 'Der er ingen projekter under denne kategori.'
-
-        for project in projects:
-            if project.status == Project.Status.CURRENT:
-                ctx['active_projects'].append(project)
-            if project.status == Project.Status.DONE:
-                ctx['finished_projects'].append(project)
-        return ctx
-
-
 class ClientProjectListView(LoginRequiredMixin, ClientRequiredMixin, ListView):
     model = Project
     template_name = 'projects/client_project_list.html'
@@ -79,6 +50,7 @@ class ProjectDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx['project'] = get_object_or_404(Project, pk=self.kwargs['pk'])
+        print(ctx['project'].users.all())
         ctx['project_is_done'] = ctx['project'] == Project.Status.DONE
         ctx['form'] = UpdateProjectStatusForm(instance=ctx['project'])
         return ctx
@@ -128,7 +100,7 @@ class ProjectDeleteView(LoginRequiredMixin, ProjectOwnerOnlyMixin, SuccessMessag
                 }
             )
         elif profile.role.name == 'Client':
-            return redirect('client-projects')
+            return reverse('client-projects')
 
     # def get_object(self, queryset=None):
     #     """ Hook to ensure object is owned by request.user. """
@@ -150,6 +122,22 @@ class UpdateStatusView(LoginRequiredMixin, TeamLeaderRequiredMixin, TemplateView
             messages.success(request, 'Projektets status er blevet opdateret!')
         else:
             messages.danger(request, 'Noget gik galt. Projektets status er derfor <b>ikke</b> blevet opdateret.')
+        return redirect(reverse('project-detail', kwargs=kwargs))
+
+
+class TeamAcceptProjectView(LoginRequiredMixin, TeamLeaderRequiredMixin, TemplateView):
+    def get(self, request, **kwargs):
+        return redirect(reverse('project-detail', kwargs=kwargs))
+
+    def post(self, request, **kwargs):
+        project = get_object_or_404(Project, pk=self.kwargs['pk'])
+        user = self.request.user
+        team = user.profile.team
+        project.team = team
+        project.leader = user
+        project.status = Project.Status.CURRENT
+        project.users.add(user)
+        project.save()
         return redirect(reverse('project-detail', kwargs=kwargs))
 
 

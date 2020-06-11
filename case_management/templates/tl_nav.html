@@ -26,10 +26,20 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Projekter
+                        {% if user.profile.team.notification_set.get_unread|length > 0 %}
+                            <span class="badge badge-danger">{{ user.profile.team.notification_set.get_unread|length }}</span>
+                        {% endif %}
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="{% url 'team-projects' user.profile.team.pk user.profile.team.slug %}">Oversigt</a>
-                        <a class="dropdown-item" href="#">Kunde anmodninger</a>
+                        <a class="dropdown-item" href="{% url 'team-projects' user.profile.team.pk user.profile.team.slug %}">
+                            Oversigt
+                        </a>
+                        <a class="dropdown-item" href="{% url 'team-project-requests' user.profile.team.pk user.profile.team.slug %}">
+                            Kunde anmodninger
+                            {% if user.profile.team.notification_set.get_unread|length > 0 %}
+                                <span class="badge badge-danger">{{ user.profile.team.notification_set.get_unread|length }}</span>
+                            {% endif %}
+                        </a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{% url 'project-create' %}">Opret nyt</a>
                     </div>

@@ -14,7 +14,11 @@
             {% if user.profile.role.name == 'Client' %}
                 <a href="{% url 'client-projects' %}" class="btn btn-primary">Tilbage til oversigt</a>
             {% else %}
-                <a href="{% url 'team-projects' user.profile.team.id user.profile.team.slug %}" class="btn btn-primary">Tilbage til oversigt</a>
+                {% if object.leader %}
+                    <a href="{% url 'team-projects' user.profile.team.id user.profile.team.slug %}" class="btn btn-primary">Tilbage til oversigt</a>
+                {% else %}
+                    <a href="{% url 'team-project-requests' user.profile.team.id user.profile.team.slug %}" class="btn btn-primary">Tilbage til oversigt</a>
+                {% endif %}
             {% endif %}
         </div>
     </div>
@@ -29,27 +33,37 @@
                     <h4>Udfør handlinger på projektet</h4>
                 </div>
                 <hr>
-                {% if object.status == 'DONE' %}
-                    <div>
-                        <h6>Projektet er markeret som færdiggjort. Du kan derfor ikke udføre handlinger på det.</h6>
-                    </div>
+                {% if object.status == 'CURRENT' %}
+                    {% if object.status == 'DONE' %}
+                        <div>
+                            <h6>Projektet er markeret som færdiggjort. Du kan derfor ikke udføre handlinger på det.</h6>
+                        </div>
+                    {% else %}
+                        <div class="mb-2">
+                            <a href="{% url 'image-create' object.pk object.slug %}" class="btn btn-primary">Tilføj billede</a>
+                            <a href="{% url 'note-create' object.pk object.slug %}" class="btn btn-primary">Tilføj note</a>
+                            {% if user == object.leader %}
+                                <a href="#" class="btn btn-info">Tilføj / fjern medarbejdere</a>
+                            {% endif %}
+                            {% if user == object.owner %}
+                                <a href="{% url 'project-update' object.pk object.slug %}" class="btn btn-secondary">Redigér</a>
+                                <a href="{% url 'project-delete' object.pk object.slug %}" class="btn btn-danger">Slet</a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                    {% if user == object.leader %}
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateStatusModal">
+                            Opdater status
+                        </button>
+                    {% endif %}
                 {% else %}
-                    <div class="mb-2">
-                        <a href="{% url 'image-create' object.pk object.slug %}" class="btn btn-primary">Tilføj billede</a>
-                        <a href="{% url 'note-create' object.pk object.slug %}" class="btn btn-primary">Tilføj note</a>
-                        {% if user == object.leader %}
-                            <a href="#" class="btn btn-info">Tilføj / fjern medarbejdere</a>
-                        {% endif %}
-                        {% if user == object.owner %}
-                            <a href="{% url 'project-update' object.pk object.slug %}" class="btn btn-secondary">Redigér</a>
-                            <a href="{% url 'project-delete' object.pk object.slug %}" class="btn btn-danger">Slet</a>
-                        {% endif %}
-                    </div>
-                {% endif %}
-                {% if user == object.leader %}
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateStatusModal">
-                        Opdater status
-                    </button>
+                    {% if user.profile.role.name == 'Team Leader' %}
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#acceptRequestModal">
+                            Tag imod projekt
+                        </button>
+                    {% else %}
+                        <div>Dit projekt er endnu ikke sat i gang. Du kan derfor ikke udføre nogen handlinger på det.</div>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>
@@ -83,7 +97,7 @@
                     <p>
                         <b>Medarbejdere:</b>
                         <br>
-                        {{ object.users|length }}
+                        {{ object.users.all|length }}
                     </p>
                 </div>
                 <div class="col-md-6">
@@ -135,6 +149,7 @@
     </div>
 </div>
 
+{% if object.status != 'PENDING' %}
 {% comment %} Images {% endcomment %}
 <div class="row">
     <div class="col-md-10 offset-md-1">
@@ -209,36 +224,61 @@
     </div>
 </div>
 
-
 {% comment %} Update PROJECT STATUS Modal {% endcomment %}
-<div class="modal fade" id="updateStatusModal" tabindex="-1" role="dialog" aria-labelledby="updateStatusModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="updateStatusModalLabel">Opdater status - {{ object.name }}</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form action="{% url 'project-status-update' object.pk object.slug %}" method="post">
-                {% csrf_token %}
-                <div id="div_id_status" class="form-group">
-                    <label for="id_stauts" class="requiredField">Status</label>
-                    <div class>
-                        <select name="status" class="select form-control" id="id_status">
-                            <option value="CURRENT">Igangværende</option>
-                            <option value="DONE">Færdig</option>
-                        </select>
+    <div class="modal fade" id="updateStatusModal" tabindex="-1" role="dialog" aria-labelledby="updateStatusModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateStatusModalLabel">Opdater status - {{ object.name }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'project-status-update' object.pk object.slug %}" method="post">
+                    {% csrf_token %}
+                    <div id="div_id_status" class="form-group">
+                        <label for="id_stauts" class="requiredField">Status</label>
+                        <div class>
+                            <select name="status" class="select form-control" id="id_status">
+                                <option value="CURRENT">Igangværende</option>
+                                <option value="DONE">Færdig</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fortryd</button>
-                    <input type="submit" class="btn btn-primary" value="Sæt status" />
-                </form>
+                <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fortryd</button>
+                        <input type="submit" class="btn btn-primary" value="Sæt status" />
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
+{% endif %}
+
+{% comment %} Accept request modal {% endcomment %}
+{% if object.status == 'PENDING' %}
+<div class="modal fade" id="acceptRequestModal" tabindex="-1" role="dialog" aria-labelledby="acceptRequestModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="acceptRequestModalLabel">Opdater status - {{ object.name }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'project-accept' object.pk object.slug %}" method="post">
+                    {% csrf_token %}
+                </div>
+                <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fortryd</button>
+                        <input type="submit" class="btn btn-primary" value="Tag imod project" />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
 {% endblock content-fluid %}

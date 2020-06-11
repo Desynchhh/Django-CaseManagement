@@ -32,3 +32,23 @@ class Team(models.Model):
 
     def __str__(self):
         return self.name
+
+
+# Manager to return custom querysets from a table
+class NotificationManager(models.Manager):
+    def get_unread(self):
+        return self.filter(read_at=None)        
+
+class Notification(models.Model):
+    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    project = models.OneToOneField("projects.Project", on_delete=models.CASCADE)
+
+    read_at = models.DateTimeField(blank=True, null=True, default=None)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    # Set model's manager to the custom manager
+    objects = NotificationManager()
+
+    def __str__(self):
+        return f'{self.project.name} Notif ({self.team.name})'

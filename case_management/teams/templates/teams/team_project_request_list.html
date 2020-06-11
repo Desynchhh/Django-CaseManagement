@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content-fluid %}
+
+{% comment %} Short description of the page {% endcomment %}
+<div class="col-md-10 offset-md-1 mb-4 content-section">
+    <h1>Kunde anmodninger</h1>
+    <div>
+        Dette er en oversigt over alle projekter, dit hold har modtaget, men ingen arbejder på.<br>
+        Herfra kan du tage imod projektet, og derefter sætte dine elever på det!
+    </div>
+</div>
+
+{% comment %} Active projects {% endcomment %}
+<div class="row">
+    <div class="col-md-10 offset-md-1 content-section">
+        <h2>Projekter</h2>
+        {% include 'projects/project_table.html' with projects=object_list %}
+    </div>
+</div>
+{% endblock content-fluid %}

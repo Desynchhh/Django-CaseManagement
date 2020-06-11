@@ -15,7 +15,7 @@
             <tr>
                 <td><a href="{% url 'project-detail' project.pk project.slug %}">{{ project.name|truncatechars:25 }}</a></td>
                 <td>{{ project.description|truncatechars:50 }}</td>
-                <td>{{ project.users|length }}</td>
+                <td>{{ project.users.all|length }}</td>
                 <td><a href="#">{{ project.leader.username }}</a></td>
                 <td><a href="#">{{ project.owner.get_full_name }}</a></td>
                 <td>
