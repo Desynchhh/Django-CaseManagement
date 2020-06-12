@@ -1,0 +1,20 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="{% url 'team-new-user' %}">Intet hold</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'team-new-user' %}">Startside</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'team-create' %}">Opret nyt hold</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+            {% include 'nav/nav_components/user_section.html' %}
+        </ul>
+    </div>
+</nav>

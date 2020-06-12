@@ -5,7 +5,7 @@
 {% block content %}
 <div class="row">
     <div class="col">
-        <h2>Opret nyt hold</h2>
+        <h2>Rediger bruger rolle</h2>
         <div>
             Oprettelse af nye hold er forbeholdt instruktører.<br>
             Hvis du <b>ikke</b> er instruktør på skolepraktikken, bedes du undlade at oprette et nyt hold.
@@ -14,15 +14,27 @@
 </div>
 <div class="row mt-3">
     <div class="col content-section">
+        <h4>Du er ved at ændre på <b>{{ object.user.username }}s</b> rolle.</h4>
+        <div>En rolle bestemmer hvilke rettigheder en bruger har på systemet. Instruktørere kan langt mere end elever kan.</div>
+        <hr>
         <form action="" method="post">
             {% csrf_token %}
             <fieldset class="form-group">
-                <legend>{{ legend }}</legend>
-                <hr>
                 {{ form|crispy }}
             </fieldset>
+            {% comment %} <fieldset class="form-group">
+                <div id="div_id_role" class="form-group">
+                    <label for="id_role" class>Rolle</label>
+                    <div class>
+                        <select name="role" class="select form-control" id="id_role">
+                            <option value="Team Member" selected>Elev</option>
+                            <option value="Team Leader">Instruktør</option>
+                        </select>
+                    </div>
+                </div>
+            </fieldset> {% endcomment %}
             <div class="form-group">
-                <button type="submit" class="btn btn-primary">{{ btn }}</button>
+                <button type="submit" class="btn btn-primary">Gem</button>
             </div>
         </form>
         {% if user.profile.team %}

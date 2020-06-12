@@ -8,12 +8,11 @@ from django.urls import reverse
 from .forms import RegisterForm, UpdateProfileForm, UpdateUserForm
 from .models import Role
 from django.contrib.auth.models import User
-from django.db.models import Q
 
 
 select_role = {
     'client': 'Client',
-    'user': 'Team Leader'
+    'employee': 'Team'
 }
 
 
@@ -40,16 +39,18 @@ def start(request):
 
 
 def confirm_login(request):
-    team = request.user.profile.team
-    if request.user.profile.role.name == 'Team Leader':
-        if team is not None:
-            return redirect(reverse('team-detail', kwargs={
-                'pk': team.id,
-                'slug': team.slug
-            }))
-        else:   # Team Leader has no team.
-            messages.info(request, 'Du har ikke noget hold. Du bedes derfor oprette et, før du kan tilgå resten af siden.<br>Du kan også få en af dine kollegaer til at tilmelde dig et eksisterende hold.')
-            return redirect('team-create')
+    role = request.user.profile.role
+
+    if role.name == 'Team':     # User has no team
+        # messages.info(request, 'Du har ikke noget hold. Du bedes derfor oprette et, før du kan tilgå resten af siden.Du kan også få en af dine kollegaer til at tilmelde dig et eksisterende hold.')
+        return redirect('team-new-user')
+    elif role.name.startswith('Team'):  # User is either Team Leader or Team Member
+        team = request.user.profile.team
+        return redirect(reverse('team-detail', kwargs={
+            'pk': team.id,
+            'slug': team.slug
+        }))
+    # User is Client.
     return redirect('client-index')
 
 
@@ -59,9 +60,10 @@ class ProfileDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        ctx['projects'] = self.request.user.project_set.all()
-        ctx['owns_projects'] = self.request.user.owner.all()
-        ctx['leads_projects'] = self.request.user.leader.all()
+        user = kwargs.get('object')
+        ctx['projects'] = user.project_set.all()
+        ctx['owns_projects'] = user.owner.all()
+        ctx['leads_projects'] = user.leader.all()
         ctx['no_projects_msg'] = 'Der blev ikke fundet nogen projekter under denne kategori.'
         if kwargs.get('object').pk is self.request.user.pk:
             ctx['is_current_user'] = True

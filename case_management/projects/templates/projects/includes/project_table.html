@@ -4,10 +4,10 @@
             <tr>
                 <th>Navn</th>
                 <th>Beskrivelse</th>
+                <th>Status</th>
                 <th>Medarbjedere</th>
                 <th>Leder</th>
                 <th>Ejer</th>
-                <th>Status</th>
                 <th>Oprettet</th>
             </tr>
         </thead>
@@ -15,18 +15,24 @@
             <tr>
                 <td><a href="{% url 'project-detail' project.pk project.slug %}">{{ project.name|truncatechars:25 }}</a></td>
                 <td>{{ project.description|truncatechars:50 }}</td>
-                <td>{{ project.users.all|length }}</td>
-                <td><a href="#">{{ project.leader.username }}</a></td>
-                <td><a href="#">{{ project.owner.get_full_name }}</a></td>
                 <td>
                     {% if project.status == 'PENDING' %}
-                        Modtaget
+                        <span class="badge badge-warning">Modtaget</span>
                     {% elif project.status == 'CURRENT' %}
-                        Igangværende
+                        <span class="badge badge-danger">Igangværende</span>
                     {% else %}
-                        Færdiggjort
+                        <span class="badge badge-success">Færdiggjort</span>
                     {% endif %}
                 </td>
+                <td>{{ project.users.all|length }}</td>
+                <td>
+                    {% if project.leader %}
+                        <a href="{% url 'user-profile' project.leader.pk %}">{{ project.leader.username }}</a>
+                    {% else %}
+                        <i><b>Ingen leder</b></i>
+                    {% endif %}
+                </td>
+                <td><a href="{% url 'user-profile' project.owner.pk %}">{{ project.owner.get_full_name }}</a></td>
                 <td>{{ project.created_at|date:"d M, Y" }}</td>
             </tr>
         {% endfor %}

@@ -12,6 +12,7 @@ from PIL import Image
 class Role(models.Model):
     name = models.CharField(
         max_length = 255,
+        unique=True,
         help_text="Et beskrivende navn til rollen.",
         error_messages={"required": "Navnefeltet er påkrævet."}
     )
@@ -30,13 +31,13 @@ class Role(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
-
+        return self.display_name
+        
 
 numbers_only = RegexValidator(r'[0-9]*', "Dit telefonnummer kan kun indeholde tal.")
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    team = models.OneToOneField(
+    team = models.ForeignKey(
         Team,
         on_delete=models.SET_DEFAULT,
         blank=True,
@@ -58,7 +59,8 @@ class Profile(models.Model):
         validators=[numbers_only],
         help_text='Et telefonnummer du kan kontaktes på.',
         blank=True,
-        null=True
+        null=True,
+        default=None
     )
     pfp = models.ImageField(
         upload_to='img/pfp/',

@@ -1,38 +1,38 @@
 [
     {
-        "model":"users.role",
+        "model": "users.role",
         "pk": 1,
         "fields": {
-            "name": "Administrator",
-            "description": "Administrator role",
-            "display_name": "Administrator"
+            "name": "Team Leader",
+            "display_name": "Instruktør",
+            "description": "Team Leader role"
         }
     },
     {
-        "model":"users.role",
+        "model": "users.role",
         "pk": 2,
         "fields": {
-            "name": "Team Leader",
-            "description": "Team Leader role",
-            "display_name": "Instruktør"
+            "name": "Team Member",
+            "display_name": "Elev",
+            "description": "Team Member role"
         }
     },
     {
-        "model":"users.role",
+        "model": "users.role",
         "pk": 3,
         "fields": {
-            "name": "Team Member",
-            "description": "Team Member role",
-            "display_name": "Elev"
+            "name": "Client",
+            "display_name": "Klient",
+            "description": "Client role"
         }
     },
     {
-        "model":"users.role",
+        "model": "users.role",
         "pk": 4,
         "fields": {
-            "name": "Client",
-            "description": "Client role",
-            "display_name": "Klient"
+            "name": "Team",
+            "display_name": "Team",
+            "description": "Medarbejder som ikke er indstillet som hverken instruktør eller elev."
         }
     }
 ]

@@ -10,14 +10,19 @@
     <title>Sagsstyring</title>
 </head>
 <body>
+    {% comment %} Include navbar {% endcomment %}
     {% if user.is_authenticated %}
         {% if user.profile.role.name == 'Team Leader' %}
-            {% include 'tl_nav.html' %}
+            {% include 'nav/tl_nav.html' %}
+        {% elif user.profile.role.name == 'Team Member' %}
+            {% include 'nav/tu_nav.html' %}
         {% elif user.profile.role.name == 'Client' %}
-            {% include 'c_nav.html' %}
+            {% include 'nav/c_nav.html' %}
+        {% else %} {% comment  %} User has no team {% endcomment %}
+            {% include 'nav/t_nav.html' %}
         {% endif %}
     {% else %}
-        {% include 'start_nav.html' %}
+        {% include 'nav/start_nav.html' %}
     {% endif %}
 
     {% if messages %}

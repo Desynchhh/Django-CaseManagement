@@ -10,7 +10,7 @@ class Team(models.Model):
     name = models.CharField(
         max_length = 255,
         unique=True,
-        help_text="Et beskrivende navn til dit hold.",
+        help_text="Et beskrivende navn til dit hold. Dette er navnet kunder og kollegaer vil se, når de vil oprette et projekt til dig.",
         error_messages={"required": "Navnefeltet er påkrævet."}
     )
     description = models.CharField(
@@ -28,7 +28,7 @@ class Team(models.Model):
         super().save(args, kwargs)
 
     def get_absolute_url(self):
-        return reverse("team-detail", kwargs={"pk": self.pk, "slug": self.slug})    
+        return reverse("team-detail", kwargs={"pk": self.pk, "slug": self.slug})
 
     def __str__(self):
         return self.name
@@ -51,4 +51,4 @@ class Notification(models.Model):
     objects = NotificationManager()
 
     def __str__(self):
-        return f'{self.project.name} Notif ({self.team.name})'
+        return f'({self.project.name}, {self.team.name})'

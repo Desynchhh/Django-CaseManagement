@@ -6,6 +6,7 @@ from django.utils import timezone
 from projects.models import Project
 from .models import Notification
 
+
 @receiver(post_save, sender=Project)
 def create_notification(sender, instance, created, **kwargs):
     if created:
@@ -15,7 +16,6 @@ def create_notification(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Project)
 def update_notification_read_at(sender, instance, **kwargs):
     notif = Notification.objects.get(project=instance)
-    print(notif)
     if instance.leader is None:
         print('Setting to None')
         notif.read_at = None

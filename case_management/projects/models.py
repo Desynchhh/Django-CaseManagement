@@ -20,10 +20,10 @@ class Project(models.Model):
     team = models.ForeignKey(
         'teams.Team',
         on_delete=models.SET_DEFAULT,
-        blank=True,
-        null=True,
+        # blank=True,
+        # null=True,
         default=None,
-        help_text='Holdet i firmaet, som du ønsker skal tage imod dit projekt.<br>Hvis du ikke vælger et, kan ethvert hold tage imod det.'
+        help_text='Holdet i firmaet, som du ønsker skal tage imod dit projekt.'# <br>Hvis du ikke vælger et, kan ethvert hold tage imod det.'
     )
 
     owner = models.ForeignKey(
@@ -91,7 +91,6 @@ class Note(models.Model):
 
     def get_absolute_url(self):
         return reverse("project-detail", kwargs={"pk": self.project.pk, "slug": self.project.slug})
-    
 
     def __str__(self):
         return self.title

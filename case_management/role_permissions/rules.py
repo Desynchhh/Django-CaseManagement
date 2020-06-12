@@ -56,3 +56,31 @@ class MediumOwnerAndTeamLeaderOnlyMixin(UserPassesTestMixin):
 
     def handle_no_permission(self):
         return handler(self.request.user)
+
+
+class TeamNewUserRequiredMixin(UserPassesTestMixin):
+    """Used for pages only accessible to users without a Team"""
+    def test_func(self):
+        return self.request.user.profile.role.name == 'Team'
+
+    def handle_no_permission(self):
+        return handler(self.request.user)
+
+
+class TeamLeaderOrTeamNewUserRequiredMixin(UserPassesTestMixin):
+    def test_func(self):
+        role = self.request.user.profile.role
+        return role.name == 'Team' or role.name == 'Team Leader'
+
+    def handle_no_permission(self):
+        return handler(self.request.user)
+
+
+class TeamUserAnyRequiredMixin(UserPassesTestMixin):
+    """Used for pages only accessible to users with either role of Team Member or Team Leader"""
+    def test_func(self):
+        role = self.request.user.profile.role
+        return role.name == 'Team Member' or role.name == 'Team Leader'
+
+    def handle_no_permission(self):
+        return handler(self.request.user)

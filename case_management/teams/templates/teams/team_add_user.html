@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block content-fluid %}
+<div class="row">
+    <div class="col offset-md-1 mb-2">
+        <h1>Tilføj medarbejdere - {{ user.profile.team.name }}</h1>
+        <h4>Her kan du tilføje brugere til dit hold. Efter tilføjelse, kan du sætte dem til at arbejde på projekter.</h4>
+    </div>
+</div>
+<div class="row">
+    <div class="col offset-md-1 mb-2">
+        <a href="{% url 'team-detail' user.profile.team.pk user.profile.team.slug %}">Gå tilbage</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-10 offset-md-1 content-section">
+        <h3>Bruger oversigt</h3>
+        <div>En liste af alle brugere, som endnu ikke er medlem af noget hold.</div>
+        <div class="row mt-2">
+            <div class="col">
+                {% if team_users|length > 0 %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Navn</th>
+                            <th>Brugernavn</th>
+                            <th>Rolle</th>
+                            <th>Projekter</th>
+                            <th>Oprettet</th>
+                            <th>Handlinger</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for tu in team_users %}
+                            <tr>
+                                <td><a href="{% url 'user-profile' tu.pk %}">{{ tu.get_full_name }}</a></td>
+                                <td>{{ tu.username }}</td>
+                                <td>{{ tu.profile.role.display_name }}</td>
+                                <td>{{ tu.project_set.all|length }}</td>
+                                <td>{{ tu.profile.created_at|date:"d M, Y" }}</td>
+                                <td>
+                                    <form action="" method="post">
+                                        {% csrf_token %}
+                                        <fieldset class="form-group">
+                                            <input type="hidden" name="user_pk" value="{{ tu.pk }}">
+                                        </fieldset>
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-primary">Tilføj</button>
+                                        </div>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                    <hr>
+                    <i><b>Der blev ikke fundet nogen nye brugere i systemet.</b></i>
+                {% endif %}
+            </div>
+        </div>
+    </div>    
+</div>
+<div class="row text-center">
+    <div class="col mt-2">
+        <a href="{% url 'team-detail' user.profile.team.pk user.profile.team.slug %}">Gå tilbage</a>
+    </div>
+</div>
+
+{% endblock content-fluid %}

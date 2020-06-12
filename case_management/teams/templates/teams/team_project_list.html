@@ -14,7 +14,7 @@
 <div class="row">
     <div class="col-md-10 offset-md-1 content-section">
         <h2>Igangværende projekter</h2>
-        {% include 'projects/project_table.html' with projects=active_projects %}
+        {% include 'projects/includes/project_table.html' with projects=active_projects %}
     </div>
 </div>
 
@@ -22,7 +22,7 @@
 <div class="row">
     <div class="col-md-10 offset-md-1 content-section">
         <h2>Færdiggjorte projekter</h2>
-        {% include 'projects/project_table.html' with projects=finished_projects %}
+        {% include 'projects/includes/project_table.html' with projects=finished_projects %}
     </div>
 </div>
 {% endblock content-fluid %}

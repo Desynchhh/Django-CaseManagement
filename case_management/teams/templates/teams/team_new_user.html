@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content-fluid %}
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <h2>Velkommen til sagsstyringssystemet hos SKP!</h2>
+        <h4>Da du lige har oprettet din bruger, er du ikke tilmeldt et hold. Du skal være tilmeldt et hold, før du kan begynde at arbejde på projekter.</h4>
+    </div>
+    <div class="row mt-2">
+        <div class="col-md-4 offset-md-1">
+            <div class="col content-section">
+                <h3>Er du elev?</h3>
+                <hr>
+                <div>
+                    <h5>Hvis du er elev, skal du blot informere din instruktør om, at du har oprettet din bruger. De vil herefter tilmelde dig på deres hold, og så skal du bare genindlæse siden for at opdatere.</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 offset-md-1">
+            <div class="col content-section">
+                <h3>Er du instruktør?</h3>
+                <hr>
+                <div>
+                    <h5>Hvis du er instruktør, kan du få en af dine medarbejdere til at tilmelde dig deres hold, eller du kan oprette et nyt ved at klikke <a href="{% url 'team-create' %}">her.</a></h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content-fluid %}
