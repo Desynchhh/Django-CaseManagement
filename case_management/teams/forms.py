@@ -11,11 +11,15 @@ class TeamUserRoleChoiceField(forms.ModelChoiceField):
 
 # Custom form to limit the amount of options in the Select field
 class UpdateTeamUserRoleForm(forms.ModelForm):
-    roles = forms.ModelChoiceField(
+    role = forms.ModelChoiceField(
         queryset=Role.objects.filter(Q(name='Team Leader') | Q(name='Team Member')),
         label='Roller'
     )
+    # roles = TeamUserRoleChoiceField(
+    #     queryset=Role.objects.filter(Q(name='Team Leader') | Q(name='Team Member')),
+    #     label='Roller'
+    # )
 
     class Meta:
         model = Profile
-        fields = ('roles',)
+        fields = ('role',)

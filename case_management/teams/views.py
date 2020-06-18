@@ -20,7 +20,7 @@ from projects.models import Project
 from role_permissions.rules import (
     TeamLeaderRequiredMixin,
     TeamNewUserRequiredMixin,
-    TeamLeaderOrTeamNewUserRequiredMixin
+    TeamUserAnyRequiredMixin
 )
 
 
@@ -29,7 +29,7 @@ class TeamNewUserView(LoginRequiredMixin, TeamNewUserRequiredMixin, TemplateView
         return render(request, 'teams/team_new_user.html')
 
 
-class TeamCreateView(LoginRequiredMixin, TeamLeaderOrTeamNewUserRequiredMixin, CreateView):
+class TeamCreateView(LoginRequiredMixin, TeamLeaderRequiredMixin, CreateView):
     model = Team
     fields = ['name', 'description']
 
@@ -72,7 +72,7 @@ class TeamUpdateView(LoginRequiredMixin, TeamLeaderRequiredMixin, UpdateView):
         return team
 
 
-class TeamDetailView(LoginRequiredMixin, TeamLeaderRequiredMixin, DetailView):
+class TeamDetailView(LoginRequiredMixin, TeamUserAnyRequiredMixin, DetailView):
     model = Team
 
     def get_context_data(self, **kwargs):
@@ -132,29 +132,22 @@ class TeamUserUpdate(LoginRequiredMixin, TeamLeaderRequiredMixin, UpdateView):
             "slug": self.kwargs.get('slug')
         })
 
-    # def form_valid(self, form):
-    #     print(form.instance.role)
-    #     print(dir(form))
-    #     return super().form_valid(form)
 
-
-class TeamProjectListView(LoginRequiredMixin, TeamLeaderRequiredMixin, ListView):
+class TeamProjectListView(LoginRequiredMixin, TeamUserAnyRequiredMixin, ListView):
     model = Project
     template_name = 'teams/team_project_list.html'
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        # ctx['active_projects'] = Project.objects.filter(
-        #     team__pk=self.kwargs['pk'],
-        #     status=Project.Status.CURRENT
-        # ).order_by('-created_at')
 
-        # ctx['finished_projects'] = Project.objects.filter(
-        #     team__pk=self.kwargs['pk'],
-        #     status=Project.Status.DONE
-        # ).order_by('-created_at')
-
-        projects = Project.objects.filter(team__pk=self.kwargs['pk'], team__slug=self.kwargs['slug']).order_by('-created_at')
+        projects = Project.objects.filter(
+            team__pk=self.kwargs['pk'],
+            team__slug=self.kwargs['slug'],
+            status__in=[
+                Project.Status.CURRENT,
+                Project.Status.DONE
+            ]
+        ).exclude(leader=None).order_by('-created_at')
         ctx['active_projects'] = []
         ctx['finished_projects'] = []
         ctx['no_projects_msg'] = 'Der er ingen projekter under denne kategori.'

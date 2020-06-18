@@ -29,7 +29,6 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='logout'),
     path('confirm-login/', user_views.confirm_login, name='confirm-login'),
     path('user/', include('users.urls')),
-    path('client/', include('clients.urls')),
     path('team/', include('teams.urls')),
     path('project/', include('projects.urls')),
     path('', user_views.start, name='start'),

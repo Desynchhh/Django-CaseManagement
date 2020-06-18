@@ -6,10 +6,6 @@
 <div class="row">
     <div class="col">
         <h2>Rediger bruger rolle</h2>
-        <div>
-            Oprettelse af nye hold er forbeholdt instruktører.<br>
-            Hvis du <b>ikke</b> er instruktør på skolepraktikken, bedes du undlade at oprette et nyt hold.
-        </div>
     </div>
 </div>
 <div class="row mt-3">
@@ -22,19 +18,9 @@
             <fieldset class="form-group">
                 {{ form|crispy }}
             </fieldset>
-            {% comment %} <fieldset class="form-group">
-                <div id="div_id_role" class="form-group">
-                    <label for="id_role" class>Rolle</label>
-                    <div class>
-                        <select name="role" class="select form-control" id="id_role">
-                            <option value="Team Member" selected>Elev</option>
-                            <option value="Team Leader">Instruktør</option>
-                        </select>
-                    </div>
-                </div>
-            </fieldset> {% endcomment %}
             <div class="form-group">
-                <button type="submit" class="btn btn-primary">Gem</button>
+                <input type="submit" class="btn btn-primary" value="Gem">
+                {% comment %} <button type="submit" class="btn btn-primary">Gem</button> {% endcomment %}
             </div>
         </form>
         {% if user.profile.team %}

@@ -15,7 +15,7 @@
         {% if user.profile.role.name == 'Team Leader' %}
             {% include 'nav/tl_nav.html' %}
         {% elif user.profile.role.name == 'Team Member' %}
-            {% include 'nav/tu_nav.html' %}
+            {% include 'nav/tm_nav.html' %}
         {% elif user.profile.role.name == 'Client' %}
             {% include 'nav/c_nav.html' %}
         {% else %} {% comment  %} User has no team {% endcomment %}

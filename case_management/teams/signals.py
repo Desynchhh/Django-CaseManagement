@@ -17,9 +17,7 @@ def create_notification(sender, instance, created, **kwargs):
 def update_notification_read_at(sender, instance, **kwargs):
     notif = Notification.objects.get(project=instance)
     if instance.leader is None:
-        print('Setting to None')
         notif.read_at = None
     else:
-        print('Setting to Now')
         notif.read_at = timezone.now()
     notif.save()

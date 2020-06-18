@@ -5,7 +5,7 @@
                 <th>Navn</th>
                 <th>Beskrivelse</th>
                 <th>Status</th>
-                <th>Medarbjedere</th>
+                <th>Elever</th>
                 <th>Leder</th>
                 <th>Ejer</th>
                 <th>Oprettet</th>
@@ -24,7 +24,7 @@
                         <span class="badge badge-success">Færdiggjort</span>
                     {% endif %}
                 </td>
-                <td>{{ project.users.all|length }}</td>
+                <td>{{ project.worker_count }}</td>
                 <td>
                     {% if project.leader %}
                         <a href="{% url 'user-profile' project.leader.pk %}">{{ project.leader.username }}</a>

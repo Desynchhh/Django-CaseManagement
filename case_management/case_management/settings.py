@@ -33,7 +33,6 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'teams.apps.TeamsConfig',
     'users.apps.UsersConfig',
-    'clients.apps.ClientsConfig',
     'projects.apps.ProjectsConfig',
     'crispy_forms',
     'django.contrib.admin',
@@ -107,7 +106,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'CET'
 
 USE_I18N = True
 

@@ -15,7 +15,7 @@
         <h3>{{ object.get_full_name }}</h3>
         <div class="row">
             <div class="col">
-                <img src="{{ object.profile.pfp.url }}" alt="NO_IMG" class="account-img">
+                <img src="{{ object.profile.pfp.url }}" alt="NO_IMG" class="box-img">
             </div>
             <div class="col">
                 <p>
@@ -59,7 +59,7 @@
                     </p>
                     <p>
                         <b>Projekter:</b><br>
-                        {{ object.project_set.all|length }}
+                        {{ object.profile.project_set.all|length }}
                     </p>
                 {% endif %}
             </div>

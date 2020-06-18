@@ -3,6 +3,7 @@ from django.views.generic import DetailView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 
 from .forms import RegisterForm, UpdateProfileForm, UpdateUserForm
@@ -38,20 +39,21 @@ def start(request):
     return render(request, 'users/start.html')
 
 
+@login_required
 def confirm_login(request):
     role = request.user.profile.role
 
     if role.name == 'Team':     # User has no team
         # messages.info(request, 'Du har ikke noget hold. Du bedes derfor oprette et, før du kan tilgå resten af siden.Du kan også få en af dine kollegaer til at tilmelde dig et eksisterende hold.')
         return redirect('team-new-user')
-    elif role.name.startswith('Team'):  # User is either Team Leader or Team Member
+    elif role.name == 'Team Member' or role.name == 'Team Leader':  # User is either Team Leader or Team Member
         team = request.user.profile.team
         return redirect(reverse('team-detail', kwargs={
             'pk': team.id,
             'slug': team.slug
         }))
     # User is Client.
-    return redirect('client-index')
+    return redirect('client-projects')
 
 
 class ProfileDetailView(LoginRequiredMixin, DetailView):
@@ -61,7 +63,7 @@ class ProfileDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         user = kwargs.get('object')
-        ctx['projects'] = user.project_set.all()
+        ctx['projects'] = user.profile.project_set.all()
         ctx['owns_projects'] = user.owner.all()
         ctx['leads_projects'] = user.leader.all()
         ctx['no_projects_msg'] = 'Der blev ikke fundet nogen projekter under denne kategori.'

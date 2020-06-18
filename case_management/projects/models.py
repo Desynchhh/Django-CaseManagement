@@ -9,13 +9,12 @@ from django.contrib.auth.models import User
 import os
 
 # Create your models here.
-
 class Project(models.Model):
+
     class Status(models.TextChoices):
         PENDING = ('PENDING', 'Modtaget')
         CURRENT = ('CURRENT', 'Igangværende')
         DONE = ('DONE', 'Færdig')
-
 
     team = models.ForeignKey(
         'teams.Team',
@@ -28,7 +27,8 @@ class Project(models.Model):
 
     owner = models.ForeignKey(
         User,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_DEFAULT,
+        default=None,
         related_name='owner'
     )
     leader = models.ForeignKey(
@@ -39,7 +39,7 @@ class Project(models.Model):
         null=True,
         default=None
     )
-    users = models.ManyToManyField(User, blank=True)
+    users = models.ManyToManyField("users.profile", blank=True)
 
     name = models.CharField(
         max_length=255,
@@ -61,6 +61,11 @@ class Project(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def worker_count(self):
+        # if self.leader is None:
+        #     return self.users.all().count()
+        return self.users.all().exclude(user=self.leader).count()
+
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
         super().save()
@@ -68,7 +73,6 @@ class Project(models.Model):
     def get_absolute_url(self):
         return reverse("project-detail", kwargs={"pk": self.pk, "slug": self.slug})
     
-
     def __str__(self):
         return self.name
 

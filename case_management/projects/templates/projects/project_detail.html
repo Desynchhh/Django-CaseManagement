@@ -33,21 +33,34 @@
                     <h4>Udfør handlinger på projektet</h4>
                 </div>
                 <hr>
-                {% if object.status == 'CURRENT' %}
+                {% if object.status == 'CURRENT' or object.status == 'DONE' %}
                     {% if object.status == 'DONE' %}
                         <div>
                             <h6>Projektet er markeret som færdiggjort. Du kan derfor ikke udføre handlinger på det.</h6>
                         </div>
                     {% else %}
                         <div class="mb-2">
-                            <a href="{% url 'image-create' object.pk object.slug %}" class="btn btn-primary">Tilføj billede</a>
-                            <a href="{% url 'note-create' object.pk object.slug %}" class="btn btn-primary">Tilføj note</a>
-                            {% if user == object.leader %}
-                                <a href="#" class="btn btn-info">Tilføj / fjern medarbejdere</a>
-                            {% endif %}
-                            {% if user == object.owner %}
-                                <a href="{% url 'project-update' object.pk object.slug %}" class="btn btn-secondary">Redigér</a>
-                                <a href="{% url 'project-delete' object.pk object.slug %}" class="btn btn-danger">Slet</a>
+                            {% if user.profile in object.users.all or user.profile.role.name == 'Team Leader' %}
+                                {% comment %} User is assigned to the project {% endcomment %}
+                                <a href="{% url 'image-create' object.pk object.slug %}" class="btn btn-primary">Tilføj billede</a>
+                                <a href="{% url 'note-create' object.pk object.slug %}" class="btn btn-primary">Tilføj note</a>
+                                {% comment %} {% if user == object.leader %}
+                                    <a href="{% url 'project-edit-users' object.pk object.slug %}" class="btn btn-info">Tilføj / fjern medarbejdere</a>
+                                {% endif %} {% endcomment %}
+                                {% if user == object.owner %}
+                                    <a href="{% url 'project-update' object.pk object.slug %}" class="btn btn-secondary">Redigér</a>
+                                    {% comment %} 
+                                        PROJECTS SHOULD NOT BE DELETABLE
+                                        <a href="{% url 'project-delete' object.pk object.slug %}" class="btn btn-danger">Slet</a>
+                                     {% endcomment %}
+                                {% endif %}
+                            {% else %}
+                                {% comment %} User is NOT assigned to the project {% endcomment %}
+                                Du er ikke meldt til dette projekt, og kan derfor ikke arbejde på det.
+                                <br>
+                                <button type="button" class="btn btn-primary mt-1" data-toggle="modal" data-target="#signUpModal">
+                                    Meld på
+                                </button>
                             {% endif %}
                         </div>
                     {% endif %}
@@ -95,9 +108,9 @@
                 </div>
                 <div class="col-md-6">
                     <p>
-                        <b>Medarbejdere:</b>
+                        <b>Elever:</b>
                         <br>
-                        {{ object.users.all|length }}
+                        {{ object.worker_count }}
                     </p>
                 </div>
                 <div class="col-md-6">
@@ -105,11 +118,12 @@
                         <b>Status:</b>
                         <br>
                         {% if object.status == 'DONE' %}
-                            Færdiggjort
+                            <span class="badge badge-success">Færdiggjort</span>
                         {% elif object.status == 'CURRENT' %}
-                            Igangværende
+
+                            <span class="badge badge-danger">Igangværende</span>
                         {% else %}
-                            Modtaget
+                            <span class="badge badge-warning">Modtaget</span>
                         {% endif %}
                     </p>
                 </div>
@@ -150,81 +164,81 @@
 </div>
 
 {% if object.status != 'PENDING' %}
-{% comment %} Images {% endcomment %}
-<div class="row">
-    <div class="col-md-10 offset-md-1">
-        <div class="content-section">
-            <div class="row">
-                <div class="col">
-                    <h4>Billeder</h4>
-                    <hr>
-                </div>
-            </div>
-            <div class="row">
-                {% for medium in object.media_set.all %}
-                    <div class="col-md-3">
-                        {% comment %} INSERT NOTES HERE {% endcomment %}
-                        <div class="content-section">
-                            <h4>
-                                {{ medium.title }}
-                                {% if user == medium.user or user.profile.role.name == 'Team Leader' %}
-                                    <a href="{% url 'image-delete' object.pk object.slug medium.pk %}" type="button" class="btn btn-danger btn-sm" style="float:right;">Slet</a>
-                                {% endif %}
-                            </h4>
-                            <hr>
-                            <img src="{{ medium.img.url }}" alt="NO_IMG">
-                            <p class="mt-2">{{ medium.description }}</p>
-                            <small>- {{ medium.user.get_full_name }}</small>
-                        </div>
-                    </div>
-                {% empty %}
+    {% comment %} Images {% endcomment %}
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <div class="content-section">
+                <div class="row">
                     <div class="col">
-                        <i><b>Ingen billeder fundet.</b></i>
+                        <h4>Billeder</h4>
+                        <hr>
                     </div>
-                {% endfor %}
+                </div>
+                <div class="row">
+                    {% for medium in object.media_set.all %}
+                        <div class="col-md-3">
+                            {% comment %} INSERT NOTES HERE {% endcomment %}
+                            <div class="content-section">
+                                <h4>
+                                    {{ medium.title }}
+                                    {% if user.profile.role.name == 'Team Leader' %}
+                                        <a href="{% url 'image-delete' object.pk object.slug medium.pk %}" type="button" class="btn btn-danger btn-sm" style="float:right;">Slet</a>
+                                    {% endif %}
+                                </h4>
+                                <hr>
+                                <img src="{{ medium.img.url }}" alt="NO_IMG" class="box-img">
+                                <p class="mt-2">{{ medium.description }}</p>
+                                <small>- {{ medium.user.get_full_name }}, {{ medium.created_at|date:"d M, Y" }}</small>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="col">
+                            <i><b>Ingen billeder fundet.</b></i>
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 
-{% comment %} Notes {% endcomment %}
-<div class="row">
-    <div class="col-md-10 offset-md-1">
-        <div class="content-section">
-            <div class="row">
-                <div class="col">
-                    <h4>Notater</h4>
-                    <hr>
-                </div>
-            </div>
-            <div class="row">
-                {% for note in object.note_set.all %}
-                    <div class="col-md-3">
-                        {% comment %} INSERT NOTES HERE {% endcomment %}
-                        <div class="content-section">
-                            <h4>
-                                {{ note.title }}
-                                {% if user == note.user or user.profile.role.name == 'Team Leader' %}
-                                    <a href="{% url 'note-delete' object.pk object.slug note.pk %}" type="button" class="btn btn-danger btn-sm" style="float:right;">Slet</a>
-                                {% endif %}
-                            </h4>
-                            <hr>
-                            <p>{{ note.description }}</p>
-                            <small>- {{ note.user.get_full_name }}</small>
-                        </div>
-                    </div>
-                {% empty %}
+    {% comment %} Notes {% endcomment %}
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <div class="content-section">
+                <div class="row">
                     <div class="col">
-                        <i><b>Ingen noter fundet.</b></i>
+                        <h4>Notater</h4>
+                        <hr>
                     </div>
-                {% endfor %}
+                </div>
+                <div class="row">
+                    {% for note in object.note_set.all %}
+                        <div class="col-md-3">
+                            {% comment %} INSERT NOTES HERE {% endcomment %}
+                            <div class="content-section">
+                                <h4>
+                                    {{ note.title }}
+                                    {% if user.profile.role.name == 'Team Leader' %}
+                                        <a href="{% url 'note-delete' object.pk object.slug note.pk %}" type="button" class="btn btn-danger btn-sm" style="float:right;">Slet</a>
+                                    {% endif %}
+                                </h4>
+                                <hr>
+                                <p>{{ note.description }}</p>
+                                <small>- {{ note.user.get_full_name }}, {{ note.created_at|date:"d M, Y" }}</small>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="col">
+                            <i><b>Ingen noter fundet.</b></i>
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-{% comment %} Update PROJECT STATUS Modal {% endcomment %}
+    {% comment %} Update PROJECT STATUS Modal {% endcomment %}
     <div class="modal fade" id="updateStatusModal" tabindex="-1" role="dialog" aria-labelledby="updateStatusModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -257,9 +271,38 @@
     </div>
 {% endif %}
 
+{% comment %} Sign up modal {% endcomment %}
+{% if object.status == 'CURRENT' and user.profile not in object.users.all %}
+    <div class="modal fade" id="signUpModal" tabindex="-1" role="dialog" aria-labelledby="signUpModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="signUpModalLabel">Opdater status - {{ object.name }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'project-sign-up' object.pk object.slug %}" method="post">
+                    {% csrf_token %}
+                    <div>
+                        Du kan kun være meldt ind på et projekt ad gangen. Hvis du allerede er på et projekt, vil du blive meldt ud af det. <br>
+                        Efter indmeldelse, vil du være i stand til at udføre handlinger på projektet.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fortryd</button>
+                        <input type="submit" class="btn btn-primary" value="Meld på" />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
 {% comment %} Accept request modal {% endcomment %}
 {% if object.status == 'PENDING' %}
-<div class="modal fade" id="acceptRequestModal" tabindex="-1" role="dialog" aria-labelledby="acceptRequestModalLabel" aria-hidden="true">
+    <div class="modal fade" id="acceptRequestModal" tabindex="-1" role="dialog" aria-labelledby="acceptRequestModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -271,6 +314,10 @@
                 <div class="modal-body">
                     <form action="{% url 'project-accept' object.pk object.slug %}" method="post">
                     {% csrf_token %}
+                    <div>
+                        Hvis du tager imod projektet, vil du blive leder af det. Det vil sige, at det er dig som bestemmer, om projektet er færdiggjort eller ej. <br>
+                        Det er også kun elever (og instruktører) på dit hold, som kan se projektet.
+                    </div>
                 </div>
                 <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Fortryd</button>
