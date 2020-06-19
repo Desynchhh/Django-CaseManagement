@@ -10,6 +10,8 @@ from .forms import RegisterForm, UpdateProfileForm, UpdateUserForm
 from .models import Role
 from django.contrib.auth.models import User
 
+import os
+
 
 select_role = {
     'client': 'Client',
@@ -36,7 +38,11 @@ def register(request, usertype:str):
 
 
 def start(request):
-    return render(request, 'users/start.html')
+    ctx = {}
+    if os.environ.get('DJANGO_ENV'):
+        ctx['django_env'] = os.environ.get('DJANGO_ENV')
+    ctx['django_env'] = 'literally nothing found, fool'
+    return render(request, 'users/start.html', context=ctx)
 
 
 @login_required
