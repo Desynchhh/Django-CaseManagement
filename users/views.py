@@ -38,10 +38,7 @@ def register(request, usertype:str):
 
 
 def start(request):
-    ctx = {}
-    if os.environ.get('DJANGO_ENV'):
-        ctx['django_env'] = os.environ.get('DJANGO_ENV')
-    ctx['django_env'] = 'literally nothing found, fool'
+    ctx = {'django_env': os.environ}
     return render(request, 'users/start.html', context=ctx)
 
 
