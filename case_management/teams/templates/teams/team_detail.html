@@ -27,7 +27,7 @@
                     <p><b>Oprettet:</b> {{ team.created_at|date:"d M, Y" }}</p>
                 </div>
                 <div class="col-md-6">
-                    <p><b>Antal elever:</b> {{ team_users|length }}</p>
+                    <p><b>Antal elever:</b> {{ team_members }}</p>
                 </div>
                 <div class="col-md-6">
                     <p><b>Antal instruktørere:</b> {{ team_leaders }}</p>
@@ -80,7 +80,7 @@
                 <tbody>
                     {% for tu in team_users %}
                         <tr>
-                            <td><a href="{% url 'user-profile' tu.pk %}">{{ tu.get_full_name }}</a></td>
+                            <td>{{ tu.get_full_name }}</td>
                             <td>{{ tu.username }}</td>
                             <td>{{ tu.profile.role.display_name }}</td>
                             <td>{{ tu.project_set.all|length }}</td>

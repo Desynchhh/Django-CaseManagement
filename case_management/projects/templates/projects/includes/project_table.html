@@ -27,12 +27,12 @@
                 <td>{{ project.worker_count }}</td>
                 <td>
                     {% if project.leader %}
-                        <a href="{% url 'user-profile' project.leader.pk %}">{{ project.leader.username }}</a>
+                        {{ project.leader.username }}
                     {% else %}
                         <i><b>Ingen leder</b></i>
                     {% endif %}
                 </td>
-                <td><a href="{% url 'user-profile' project.owner.pk %}">{{ project.owner.get_full_name }}</a></td>
+                <td>{{ project.owner.get_full_name }}</td>
                 <td>{{ project.created_at|date:"d M, Y" }}</td>
             </tr>
         {% endfor %}

@@ -80,8 +80,9 @@ class TeamDetailView(LoginRequiredMixin, TeamUserAnyRequiredMixin, DetailView):
         team = get_object_or_404(Team, pk=self.kwargs['pk'], slug=self.kwargs['slug'])
         
         ctx['team'] = team
-        ctx['team_users'] = User.objects.filter(profile__team=team)
         ctx['team_leaders'] = User.objects.filter(profile__team=team, profile__role__name='Team Leader').count()
+        ctx['team_members'] = User.objects.filter(profile__team=team, profile__role__name='Team Member').count()
+        ctx['team_users'] = User.objects.filter(profile__team=team)
 
         ctx['projects'] = Project.objects.filter(team=team).exclude(leader=None)
         ctx['active_projects'] = Project.objects.filter(team=team, status=Project.Status.CURRENT)
