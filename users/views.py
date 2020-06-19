@@ -38,7 +38,16 @@ def register(request, usertype:str):
 
 
 def start(request):
-    ctx = {'django_env': os.environ}
+    ctx = {
+        'envs': [
+            os.environ['DJANGO_ENV'],
+            os.environ['DBHOST'],
+            os.environ['DBNAME'],
+            os.environ['DBUSER'],
+            os.environ['DBPASS'],
+
+        ]
+    }
     return render(request, 'users/start.html', context=ctx)
 
 

@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content-fluid %}
-        {{ django_env }}
+    {% for env in envs %}
+    <p>{{ env }}</p>
+    {% endfor %}
     <div class="row mt-3">
         <div class="col">
             <div class="col content-section">
