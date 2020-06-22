@@ -1,3 +1,4 @@
+import os
 from .settings import *
 
 # Configure default domain name

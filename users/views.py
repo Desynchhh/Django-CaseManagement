@@ -40,11 +40,11 @@ def register(request, usertype:str):
 def start(request):
     ctx = {
         'envs': [
-            os.environ['DJANGO_ENV'],
-            os.environ['DBHOST'],
-            os.environ['DBNAME'],
-            os.environ['DBUSER'],
-            os.environ['DBPASS'],
+            os.environ.get('DJANGO_ENV'),
+            os.environ.get('DBHOST'),
+            os.environ.get('DBNAME'),
+            os.environ.get('DBUSER'),
+            os.environ.get('DBPASS'),
 
         ]
     }
