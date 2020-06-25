@@ -10,8 +10,6 @@ from .forms import RegisterForm, UpdateProfileForm, UpdateUserForm
 from .models import Role
 from django.contrib.auth.models import User
 
-import os
-
 
 select_role = {
     'client': 'Client',
@@ -38,17 +36,7 @@ def register(request, usertype:str):
 
 
 def start(request):
-    ctx = {
-        'envs': [
-            os.environ.get('DJANGO_ENV'),
-            os.environ.get('DBHOST'),
-            os.environ.get('DBNAME'),
-            os.environ.get('DBUSER'),
-            os.environ.get('DBPASS'),
-
-        ]
-    }
-    return render(request, 'users/start.html', context=ctx)
+    return render(request, 'users/start.html')
 
 
 @login_required
@@ -79,7 +67,7 @@ class ProfileDetailView(LoginRequiredMixin, DetailView):
         ctx['owns_projects'] = user.owner.all()
         ctx['leads_projects'] = user.leader.all()
         ctx['no_projects_msg'] = 'Der blev ikke fundet nogen projekter under denne kategori.'
-        if kwargs.get('object').pk is self.request.user.pk:
+        if kwargs.get('object').pk == self.request.user.pk:
             ctx['is_current_user'] = True
         return ctx
 

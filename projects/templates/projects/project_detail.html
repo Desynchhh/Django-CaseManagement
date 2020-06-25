@@ -96,14 +96,18 @@
                     <p>
                         <b>Sagsleder:</b>
                         <br>
-                        <a href="#">{{ object.leader.username }}</a>
+                        {% if object.leader %}
+                            {{ object.leader.username }}
+                        {% else %}
+                            <i><b>Endnu ingen leder.</b></i>
+                        {% endif %}
                     </p>
                 </div>
                 <div class="col-md-6">
                     <p>
                         <b>Ejer:</b>
                         <br>
-                        <a href="#">{{ object.owner.get_full_name }}</a>
+                        {{ object.owner.get_full_name }}
                     </p>
                 </div>
                 <div class="col-md-6">
@@ -186,7 +190,7 @@
                                     {% endif %}
                                 </h4>
                                 <hr>
-                                <img src="{{ medium.img.url }}" alt="NO_IMG" class="box-img">
+                                <img src="{{ medium.blob_url }}" alt="NO_IMG" class="box-img">
                                 <p class="mt-2">{{ medium.description }}</p>
                                 <small>- {{ medium.user.get_full_name }}, {{ medium.created_at|date:"d M, Y" }}</small>
                             </div>

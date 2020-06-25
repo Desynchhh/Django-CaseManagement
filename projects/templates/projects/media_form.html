@@ -11,6 +11,12 @@
                 <legend>Upload billede</legend>
                 <hr>
                 {{ form|crispy }}
+                <div id="div_id_img" class="form-group">
+                    <label for="id_img" class="requiredField">Billede</label>
+                    <div class>
+                        <input type="file" name="img" accept="image/*" class="form-control-file" id="img_id" required />
+                    </div>
+                </div>
             </fieldset>
             <div class="form-group">
                 <button type="submit" class="btn btn-primary">Upload</button>

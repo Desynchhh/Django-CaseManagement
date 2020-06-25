@@ -18,7 +18,11 @@ class Team(models.Model):
         help_text="En lille beskrivelse af dit holds funktion.",
         error_messages={"required": "Beskrivelsesfeltet er påkrævet."}
     )
-    slug = models.SlugField(max_length=255, blank=True)
+    slug = models.SlugField(
+        max_length=255,
+        blank=True,
+        help_text='Dette felt vil automatisk blive udfyldt når du opretter holdet.'
+    )
 
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)

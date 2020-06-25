@@ -1,14 +1,13 @@
 from django import forms
 
-from .models import Project
+from .models import Project, Media
 
 class UpdateProjectStatusForm(forms.ModelForm):
     status = forms.ChoiceField(choices=Project.Status.choices)
 
     class Meta:
         model = Project
-        fields = ['status']
-
+        fields = ('status',)
 
 
 # VIEWS WITH THIS FORM IS NO LONGER IN USE

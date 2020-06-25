@@ -11,9 +11,12 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-if os.environ.get('DJANGO_ENV') == 'production':
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'case_management.production')
-else:
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'case_management.settings')
+
+settings_file = f'case_management.{os.getenv("DJANGO_ENV", "settings")}'
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', settings_file)
+# if os.environ.get('DJANGO_ENV') == 'production':
+#     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'case_management.production')
+# else:
+#     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'case_management.settings')
 
 application = get_wsgi_application()

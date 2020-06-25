@@ -6,6 +6,8 @@ from django.utils import timezone
 
 from django.contrib.auth.models import User
 
+from blobstorage import AzureStorage
+
 import os
 
 # Create your models here.
@@ -58,6 +60,14 @@ class Project(models.Model):
         default=Status.PENDING
     )
 
+    # Field starts out as NULL, but gets set automagically post-save (check signals.py)
+    azure_container = models.CharField(
+        max_length=255,
+        blank=True,
+        default=None,
+        null=True
+    )
+
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -67,6 +77,7 @@ class Project(models.Model):
         return self.users.all().exclude(user=self.leader).count()
 
     def save(self, *args, **kwargs):
+        # Create slug
         self.slug = slugify(self.name)
         super().save()
 
@@ -100,8 +111,8 @@ class Note(models.Model):
         return self.title
 
 
-def get_upload_path(instance, filename):
-    return os.path.join('img', str(instance.project.pk), filename)
+# def get_upload_path(instance, filename):
+#     return os.path.join('img', str(instance.project.pk), filename)
 
 class Media(models.Model):
     title = models.CharField(
@@ -113,7 +124,9 @@ class Media(models.Model):
         error_messages={"required":"Beskrivelsesfeltet er påkrævet."}
     )
 
-    img = models.ImageField(upload_to=get_upload_path)
+    # img = models.ImageField(upload_to=None, null=True, default=None)
+    blob = models.CharField(max_length=255, blank=True)
+    blob_url = models.CharField(max_length=255, blank=True)
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
@@ -123,6 +136,7 @@ class Media(models.Model):
 
     def get_absolute_url(self):
         return reverse("project-detail", kwargs={"pk": self.project.pk, "slug": self.project.slug})
+
 
     def __str__(self):
         return self.title

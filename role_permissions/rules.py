@@ -59,7 +59,6 @@ class TeamUserAnyRequiredMixin(UserPassesTestHandler):
 
 class ProjectUsersOnly(UserPassesTestHandler):
     def test_func(self):
-        print(self.kwargs)
         project = Project.objects.get(pk=self.kwargs['pid'], slug=self.kwargs['slug'])
         user = self.request.user
 

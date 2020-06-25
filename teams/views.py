@@ -65,8 +65,6 @@ class TeamUpdateView(LoginRequiredMixin, TeamLeaderRequiredMixin, UpdateView):
     
     def get_object(self, queryset=None):
         team = super().get_object()
-        print(team)
-        print(self.request.user.profile.team)
         if team != self.request.user.profile.team:
             raise Http404
         return team

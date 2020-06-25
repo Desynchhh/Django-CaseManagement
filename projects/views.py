@@ -31,6 +31,8 @@ from role_permissions.rules import (
     ProjectUsersOnly
 )
 
+from blobstorage import AzureStorage
+
 # Create your views here.
 class ClientProjectListView(LoginRequiredMixin, ClientRequiredMixin, ListView):
     """
@@ -73,11 +75,14 @@ class ProjectCreateView(LoginRequiredMixin, TLOrClientRequiredMixin, SuccessMess
     Only logged in users with a role of either Team Leader or Client has access to this view.
     """
     model = Project
-    fields = ['name', 'description', 'team']
+    fields = ('name', 'description', 'team')
     success_message = 'Projektet er blevet oprettet!'
 
     def form_valid(self, form):
+        # Set model fields that are not displayed on the form
         form.instance.owner = self.request.user
+
+        # Save DB entry
         return super().form_valid(form)
     
     def get_context_data(self, **kwargs):
@@ -230,10 +235,13 @@ class ImageCreateView(LoginRequiredMixin, ProjectUsersOnly, SuccessMessageMixin,
     On POST requests: Validates the submitted form and creates an image entry associated with the Project in the DB. Then redirects to ProjectDetailView.
     Only logged in users who are associated with the Project have access to this view (projectusers, leader, owner)
     """
-
     model = Media
-    fields = ('title', 'description', 'img')
+    fields = ('title', 'description')
+    # template_name = "projects/media_form.html"
     success_message = 'Billedet er blevet tilføjet til projektet.'
+    
+    def get_success_url(self):
+        return reverse('project-detail', kwargs={"pk": self.kwargs.get('pid'), "slug": self.kwargs.get('slug')})
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -241,8 +249,23 @@ class ImageCreateView(LoginRequiredMixin, ProjectUsersOnly, SuccessMessageMixin,
         return ctx
 
     def form_valid(self, form):
+        # Get the Project the Image is being uploaded to
+        project = Project.objects.get(pk=self.kwargs.get('pid'))
+        # Get image from the form
+        image = self.request.FILES.get('img')
+        
+        # Upload to Azure Storage
+        azure = AzureStorage()
+        blob_url = azure.upload_blob(project.azure_container, image)
+
+        # Set model fields that are not on the form
         form.instance.user = self.request.user
-        form.instance.project = Project.objects.get(pk=self.kwargs.get('pid'))
+        form.instance.project = project
+        form.instance.blob = image.name
+        form.instance.blob_url = blob_url
+
+        # return redirect(reverse('image-create', kwargs={"pid": self.kwargs.get('pid'), "slug": self.kwargs.get('slug')}))
+        # Create DB entry
         return super().form_valid(form)
 
 
