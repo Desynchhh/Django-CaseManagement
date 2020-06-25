@@ -6,6 +6,9 @@ ALLOWED_HOSTS = [os.environ['WEBSITE_SITE_NAME'] + '.azurewebsites.net', '127.0.
 
 DEBUG = False
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'static_root')
+STATIC_URL = '/static_root/'
+
 # Configure Postgres database
 DATABASES = {
     'default': {
