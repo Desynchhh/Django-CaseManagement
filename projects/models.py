@@ -79,7 +79,7 @@ class Project(models.Model):
     def save(self, *args, **kwargs):
         # Create slug
         self.slug = slugify(self.name)
-        super().save()
+        super().save(*args, **kwargs)
 
     def get_absolute_url(self):
         return reverse("project-detail", kwargs={"pk": self.pk, "slug": self.slug})

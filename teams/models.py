@@ -29,7 +29,7 @@ class Team(models.Model):
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
-        super().save(args, kwargs)
+        super().save(*args, **kwargs)
 
     def get_absolute_url(self):
         return reverse("team-detail", kwargs={"pk": self.pk, "slug": self.slug})

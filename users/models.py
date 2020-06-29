@@ -72,7 +72,7 @@ class Profile(models.Model):
 
     # Resize image after upload
     def save(self, *args, **kwargs):
-        super().save()
+        super().save(*args, **kwargs)
 
         img = Image.open(self.pfp.path)
 
