@@ -51,7 +51,7 @@ class Profile(models.Model):
         blank=True,
         null=True,
         default=None,
-        help_text="Brugerens rolle. Denne vil bestemme hvilke rettigheder De har i app'en, samt hvilke sider De kan tilgå."
+        help_text="Brugerens rolle. Denne vil bestemme hvilke rettigheder de har i app'en, samt hvilke sider de kan tilgå."
     )
 
     phone_number = models.CharField(
